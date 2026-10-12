@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>벼농사 도우미</title><meta name='theme-color' content='#2f7d32'>
+<style>
+:root{--bg:#f6f7f2;--card:#fff;--tx:#1f2a1c;--sub:#5d6a58;--pri:#2f7d32;--pri2:#e3f1e0;--bd:#d9dfd2;--warn:#b45309;--warnbg:#fff4e0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a12;--card:#1e271b;--tx:#e8eee4;--sub:#a3b09d;--pri:#6cc36f;--pri2:#26361f;--bd:#34412f;--warn:#fbbf24;--warnbg:#3a2e10}}
+:root[data-theme="dark"]{--bg:#141a12;--card:#1e271b;--tx:#e8eee4;--sub:#a3b09d;--pri:#6cc36f;--pri2:#26361f;--bd:#34412f;--warn:#fbbf24;--warnbg:#3a2e10}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Noto Sans KR","Malgun Gothic",sans-serif;font-size:19px;line-height:1.6}
+main{max-width:720px;margin:0 auto;padding:12px 14px 40px}
+h1{font-size:22px;margin:6px 0 10px}
+nav{display:flex;gap:6px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);padding:6px 0;z-index:5;overflow-x:auto}
+nav button{flex:1;min-width:76px;padding:12px 6px;font-size:16px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-weight:600}
+nav button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin:10px 0}
+label{display:block;font-size:15px;color:var(--sub);margin:8px 0 4px}
+input,select{width:100%;padding:12px;font-size:17px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.tl{border-left:3px solid var(--bd);margin-left:6px;padding-left:14px}
+.it{position:relative;margin:0 0 14px}
+.it:before{content:"";position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:var(--bd)}
+.it.now:before{background:var(--pri);box-shadow:0 0 0 4px var(--pri2)}
+.it.past{opacity:.55}
+.d{font-size:14px;color:var(--sub)}.t{font-weight:700}
+.tag{display:inline-block;background:var(--pri2);color:var(--pri);border-radius:6px;padding:1px 8px;font-size:13px;margin-left:6px}
+.opt{display:block;width:100%;text-align:left;padding:14px;margin:6px 0;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font-size:17px}
+.opt:active{background:var(--pri2)}
+.res h3{margin:0 0 4px;font-size:18px}.res p{margin:3px 0;font-size:16px}
+.warn{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:14px;margin:10px 0}
+.back{background:none;border:0;color:var(--pri);font-size:16px;font-weight:600;padding:8px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.chips button{padding:10px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px}
+.chips button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+ul{padding-left:20px;margin:4px 0}ol{padding-left:22px}.fb{background:var(--pri2);border:1px solid var(--pri);border-radius:10px;padding:10px 12px;font-weight:700;text-align:center}.fb.ok{background:var(--pri);color:#fff}.fa{text-align:center;color:var(--pri);font-weight:700;padding:6px 0}textarea{font-family:inherit}
+nav button{font-size:18px!important;padding:14px 8px!important}input,select{font-size:20px!important}.opt{font-size:20px!important}.d{font-size:16px!important}</style>
+</head>
+<body>
+<main>
+<h1>🌾 벼농사 도우미</h1>
+<nav id="nav"></nav>
+<div class="card" id="reg" style="margin:6px 0"></div><div id="view"></div>
+<div class="warn">약제는 반드시 <b>작물별 등록 여부, 사용 횟수, 수확 전 사용 제한일</b>을 라벨과 농사로·농약안전정보시스템에서 확인하세요. 날짜는 중부 평야지 기준 평균이며 품종·지역·해에 따라 달라집니다.</div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const tabs=[["plant","🌱 모내기일"],["now","⏱ 지금"],["cal","📅 벼 달력"],["tip","🧪 방제·영양"],["dx","🔍 병해충"],["flow","🧭 대처흐름"],["crop","🥬 채소·밭작물"],["faq","❓ 자주묻는것"]];
+let tab="now",st={};
+try{st=JSON.parse(localStorage.getItem("nongsa")||"{}")}catch(e){}
+const save=()=>{try{localStorage.setItem("nongsa",JSON.stringify(st))}catch(e){}};
+const fmt=d=>`${d.getMonth()+1}/${d.getDate()}`;
+const add=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const iso=d=>d.toISOString().slice(0,10);
+
+function nav(){$("#nav").innerHTML=tabs.map(([k,v])=>`<button class="${k==tab?'on':''}" onclick="go('${k}')">${v}</button>`).join("")}
+function go(k){tab=k;st.dx=null;st.f=null;st.p=[];render()}
+
+// 벼 달력: [기준, 일수, 제목, 설명]
+const plan=[
+["t",-7,"육묘 종자소독·침종","종자소독 후 침종, 발아 불량·키다리병 예방. 소독액 처리 후 충분히 헹굼"],
+["t",0,"이앙(모내기)","활착까지 물을 약간 깊게(5~7cm). 어린 모는 냉해 주의"],
+["t",3,"초기 제초제","이앙 3~10일 사이 라벨 시기에 맞춰 처리. 물 깊이 유지, 물 흘려보내지 않기"],
+["t",7,"벼물바구미·초기 점검","잎에 줄무늬 식흔 확인. 발생 많으면 등록약제 방제"],
+["t",35,"중간물떼기 시작","분얼 끝(줄기 수 충분)할 때 7~10일 물 빼서 뿌리 활력↑, 무효분얼 억제"],
+["h",-25,"이삭거름","질소 과다 주의(도열병·도복↑). 잎색이 진하면 줄이거나 생략"],
+["h",-10,"이삭도열병 1차 점검","잎도열병 있으면 예방 방제 검토. 비·저온 다습 예보 시 특히 주의"],
+["h",-3,"출수 직전 방제 판단","이삭도열병·세균성벼알마름병 예방. 이삭 패기 직전~출수기 시기 확인"],
+["h",0,"출수기","물 마르지 않게 관리. 고온(35℃ 이상) 때 낮 물 깊게 대어 식히기"],
+["h",7,"출수 후 병해충","흰잎마름병·이삭누룩병·노린재, 벼멸구 발생 정보 확인(태풍·비 후 즉시 점검)"],
+["h",20,"벼멸구·흑명나방 점검","밑동 멸구, 잎 말림 확인. 한 곳에서 번지면 즉시 방제 판단"],
+["h",28,"물떼기(낙수)","수확 전 15~20일쯤 서서히 배수. 너무 일찍 빼면 쭉정이·미질 저하"],
+["h",40,"수확 적기 시작","낟알 약 85~90% 황변, 수분 약 20~25%일 때 수확"],
+["h",48,"수확 마감","너무 늦으면 도복·쌀 깨짐 증가. 건조는 수분 15% 안팎까지"]
+];
+function cal(){
+ const today=new Date();
+ let t=st.t?new Date(st.t):null, h=st.h?new Date(st.h):null;
+ if(t&&!h) h=add(t,82);
+ let html=`<div class="card"><div class="row"><div><label>이앙일</label><input type="date" id="t" value="${st.t||''}"></div><div><label>출수일(모르면 비워두기)</label><input type="date" id="h" value="${st.h||''}"></div></div><div class="d">${t&&!st.h?'출수일은 이앙 +82일로 예상했어요. 이삭이 패면 실제 날짜를 입력하세요.':''}</div></div>`;
+ if(!t&&!h){html+=`<div class="card">이앙일을 입력하면 시기별 할 일이 자동 계산됩니다.</div>`}
+ else{
+  const items=plan.map(([b,n,ti,ds])=>{const base=b=="t"?t:h; if(!base)return null; return {d:add(base,n),ti,ds,b}}).filter(Boolean).sort((a,b)=>a.d-b.d);
+  const ni=items.findIndex(i=>i.d>=new Date(today.toDateString()));
+  html+=`<div class="tl">`+items.map((i,k)=>`<div class="it ${k==ni?'now':(i.d<today&&k<ni?'past':'')}"><div class="d">${fmt(i.d)} ${i.b=='h'&&!st.h?'(예상)':''}${k==ni?'<span class="tag">다음 할 일</span>':''}</div><div class="t">${i.ti}</div><div class="d" style="font-size:15px">${i.ds}</div></div>`).join("")+`</div>`;
+ }
+ $("#view").innerHTML=html;
+ $("#t").onchange=e=>{st.t=e.target.value;save();cal()};
+ $("#h").onchange=e=>{st.h=e.target.value;save();cal()};
+}
+
+// 병해충 진단
+const parts={
+"잎":[
+["잎에 마름모(방추형) 반점, 가운데 회색·가장자리 갈색","잎도열병","저온다습·질소 과다에서 많음. 초기에 등록약제 방제, 질소 줄이기, 물 얕게 관리하지 않기","이삭도열병으로 이어질 수 있어 출수 전 점검"],
+["잎 끝·가장자리에서 물결모양 노란 줄이 번짐","흰잎마름병","침수·태풍·강한 비 후 발생. 번지기 전에 등록약제 방제, 질소 과다 금지","논물 따라 번지므로 물꼬 관리 주의"],
+["작은 갈색 깨알 반점이 많음, 생육이 약함","깨씨무늬병","양분 부족(칼륨·규산)·노후답·물빠짐 과다가 원인. 퇴비, 규산·칼륨 보충","병약제보다 토양 개선이 핵심"],
+["잎이 세로로 말리고 하얗게 변함, 안에 애벌레","흑명나방","8월 중하순 발생. 잎 말린 비율이 높으면 등록약제 방제","비래 시기에 맞춰 예찰"],
+["잎에 가는 줄무늬 식흔, 이앙 초기","벼물바구미","초기 잎 갉아먹음. 피해 심하면 등록약제 처리, 어린 모일수록 위험",""],
+["새잎이 노랗게 줄무늬, 말리며 시듦","줄무늬잎마름병(바이러스)","애멸구가 옮김. 병든 포기는 뽑아 제거, 애멸구 방제","약제로 병을 고치진 못함. 매개충 차단이 핵심"]
+],
+"줄기·밑동":[
+["밑동에 작은 벌레 무리, 논 한 곳이 원형으로 말라 쓰러짐","벼멸구·흰등멸구","빠르게 번지는 대표 해충. 발견 즉시 밑동까지 닿게 등록약제 방제","7~9월 비래 정보 수시 확인, 늦으면 수확 불가 수준"],
+["줄기 아래 잎집에 구름모양 갈색 병반","잎집무늬마름병(문고병)","고온다습·밀식에서 번짐. 통풍, 질소 절제, 초기 방제","물 깊이 관리와 배수도 도움"],
+["줄기 속 애벌레, 어린 줄기 시들거나 이삭이 하얗게 섬","이화명나방(줄기 벌레)","줄기를 갈라 애벌레 확인. 발생 시기 맞춰 등록약제 방제",""],
+["줄기가 약해 한쪽으로 쓰러짐(병·벌레 흔적 없음)","도복","질소 과다·밀식·물떼기 부족. 쓰러지면 수확 적기를 앞당기고 빨리 베기","내년엔 이삭거름 감량, 중간물떼기 철저"]
+],
+"이삭":[
+["이삭목이 갈색~검게 변해 꺾임, 흰 쭉정이","이삭도열병","출수기 비·저온다습에서 발생. 예방 방제가 중요, 터진 뒤엔 회복 어려움","출수 전 3~5일, 출수 후 필요시 추가 판단"],
+["알이 이삭 모양 그대로 흰~연갈색, 속이 비거나 썩음","세균성벼알마름병","출수기 고온·비에 많음. 예방 방제가 효과적, 발병 후엔 한계","씨앗 소독 철저가 근본 예방"],
+["알에서 녹색~검은 덩어리(균핵 모양)","이삭누룩병","출수기 비 많고 질소 과다일 때. 출수 전 예방 방제","수확 때 병든 알은 선별"],
+["알에 갈색 반점, 쌀이 변색","노린재류(먹노린재 등)","출수 후 즙을 빨아 얼룩미 발생. 출수 후 시기에 맞춘 방제","주변 논둑 잡초 관리"],
+["이삭은 패는데 쭉정이 많음, 병반 없음","고온·냉해 장해","출수기 35℃ 이상 또는 저온으로 수정 불량. 물 깊이 대기, 다음 해 출수기 조절","병이 아니라 날씨 영향"]
+],
+"모·전체":[
+["못자리 모가 웃자라고 노랗고 키만 큼","키다리병","종자소독 미흡 때 많음. 병든 모는 이앙 금지, 다음엔 종자소독 철저",""],
+["이앙 후 전체가 노랗고 안 큼","활착 불량·양분·가스 피해","물 깊이·뿌리 상태 확인. 뿌리가 검으면 중간물떼기·배수로 환기","질소 부족이면 웃거름 검토"],
+["잎색이 매우 진하고 키만 큼","질소 과다","도복·도열병 위험↑. 이삭거름 줄이거나 생략, 중간물떼기 강화",""]
+]};
+function dx(){
+ let h="";
+ if(!st.dx){
+  h=`<div class="card"><b>어디가 이상한가요?</b>`+Object.keys(parts).map(k=>`<button class="opt" onclick="st.dx='${k}';render()">${{"잎":"🍃 잎","줄기·밑동":"🌱 줄기·밑동","이삭":"🌾 이삭","모·전체":"🧭 모·전체 생육"}[k]}</button>`).join("")+`</div>`;
+ }else{
+  h=`<button class="back" onclick="st.dx=null;render()">← 부위 다시 선택</button>`+parts[st.dx].map(p=>`<div class="card res"><div class="d">증상</div><p>${p[0]}</p><h3>👉 ${p[1]}</h3><p>${p[2]}</p>${p[3]?`<p class="d">참고: ${p[3]}</p>`:""}</div>`).join("")+`<div class="card d">증상이 여러 개 겹치거나 애매하면 사진을 찍어 마을 담당자나 농업기술센터에 문의하세요.</div>`;
+ }
+ $("#view").innerHTML=h;
+}
+
+// 다른 작물
+const crops={
+"고추":[["4~5월","정식 후 활착, 지지대 설치. 저온 시 보온"],["6~7월","탄저병·역병 예방 시작(장마 전). 칼슘 부족 시 배꼽썩음"],["7~8월","담배나방·총채벌레·진딧물 점검, 웃거름 2~3회 분산"],["9~10월","마지막 수확, 병든 과실·잔재 반드시 치우기"]],
+"들깨":[["5~6월","파종·정식. 잡초 관리 철저"],["7~8월","잎 수확은 생육 보며. 파밤나방·녹병·시들음 점검"],["10월 중순","꼬투리 갈변 70~80%일 때 수확, 이슬 있을 때 베어 터짐 줄이기"],["10~11월","그늘 건조 후 탈곡"]],
+"고구마":[["5~6월","순 심기, 활착 후 제초"],["7~8월","잎 과번성(질소 과다) 주의, 굼벵이 피해 점검"],["10월 상~중순","서리 오기 전 수확, 상처 최소화"],["수확 직후","큐어링: 약 30~33℃, 습도 높게 3~5일 → 이후 13~15℃ 저장"]]
+};
+function crop(){
+ const c=st.c||"고추";
+ let h=`<div class="chips">`+Object.keys(crops).map(k=>`<button class="${k==c?'on':''}" onclick="st.c='${k}';save();render()">${k}</button>`).join("")+`</div>`;
+ h+=`<div class="tl">`+crops[c].map(r=>`<div class="it"><div class="t">${r[0]}</div><div class="d" style="font-size:16px">${r[1]}</div></div>`).join("")+`</div>`;
+ h+=`<div class="card d">증상은 사진을 찍어 마을 담당자나 농업기술센터에 문의하세요.</div>`;
+ $("#view").innerHTML=h;
+}
+
+const faq=[
+["이삭거름은 언제 얼마나 주나요?","출수 전 약 25일이 기준입니다. 잎색이 진하고 키가 크면 줄이거나 생략하세요. 질소가 많으면 도열병·도복이 늘어납니다."],
+["중간물떼기는 꼭 해야 하나요?","이앙 후 약 35~40일, 줄기 수가 충분할 때 7~10일 합니다. 뿌리 활력이 좋아지고 무효분얼·도복이 줄어듭니다."],
+["수확은 언제 하나요?","출수 후 약 40~48일, 낟알 85~90%가 황변하고 수분이 20~25% 정도일 때가 적기입니다."],
+["물은 언제 빼나요?","수확 약 15~20일 전부터 서서히 뺍니다. 너무 빠르면 쭉정이와 미질 저하가 생깁니다."],
+["태풍·장마 후 뭘 먼저 하나요?","쓰러짐·침수 확인 → 물 빼기 → 흰잎마름병·도열병 점검 → 필요 시 방제 순서입니다."],
+["벼멸구는 어떻게 보나요?","7~9월에 밑동을 살펴보세요. 논 한 곳이 둥글게 말라가면 즉시 방제 판단이 필요합니다."]
+];
+function faqv(){$("#view").innerHTML=faq.map(f=>`<div class="card"><b>Q. ${f[0]}</b><p style="margin:6px 0 0">${f[1]}</p></div>`).join("")}
+
+const P=[
+[4,1,"육묘·못자리",["키다리병","잘록병(모썩음)","냉해·저온 장해"],"상토에 비료가 들어 있으면 추가 불필요. 모가 노랗게 뜨면 웃거름은 소량만.","종자소독 철저, 낮 고온 때 환기."],
+[5,1,"이앙·활착기",["벼물바구미(잎 줄무늬 식흔)","초기 잡초","냉해"],"밑거름은 써레질 전에. 분얼비는 이앙 7~10일 후.","활착까지 물 깊게(5~7cm), 초기 제초제는 라벨 시기 준수."],
+[6,1,"분얼기",["잎도열병","애멸구(줄무늬잎마름병 매개)","잡초 재발"],"분얼비 시기. 규산 부족 논은 보충. 잎색이 진하면 질소 추가 금지.","이앙 35~40일쯤 중간물떼기 7~10일."],
+[7,1,"분얼 후기~이삭거름 준비",["잎집무늬마름병(문고병)","잎도열병","벼멸구·흰등멸구 비래 초기"],"이삭거름은 출수 약 25일 전. 잎색이 진하면 줄이거나 생략.","장마 후 병 번짐 점검, 멸구 예찰 시작."],
+[7,20,"유수형성~수잉기",["이삭도열병 준비","잎집무늬마름병","벼멸구·흰등멸구","흑명나방"],"이삭거름(질소) 과다하면 도열병·도복↑. 칼륨·규산이 부족한 논은 보충.","출수 7~10일 전 이삭도열병 예방 방제 판단."],
+[8,10,"출수기·개화기",["이삭도열병","세균성벼알마름병","이삭누룩병","흰잎마름병(태풍 후)","노린재류"],"출수 후 잎색이 너무 연할 때만 소량 실거름. 그 외엔 추가 비료 자제.","고온(35℃↑) 땐 물 깊게. 태풍·비 직후엔 즉시 병 점검."],
+[8,25,"등숙 초기",["벼멸구·흰등멸구","흑명나방","먹노린재 등 노린재"],"웃거름 불필요. 엽면시비는 효과가 제한적, 필요할 때만.","밑동 멸구 확인(논 한 곳 원형으로 마르면 즉시 방제 판단)."],
+[9,10,"등숙 후기",["멸구 마지막 점검","도복"],"비료 시용 없음.","물떼기(수확 15~20일 전부터 서서히), 방제는 수확 전 사용 제한일 확인."],
+[9,25,"수확기",["도복 피해","이삭 발아·변색"],"비료 없음.","낟알 85~90% 황변, 수분 20~25%에 수확. 건조는 수분 15% 안팎까지."],
+[10,20,"수확 후 정리",["월동 해충(이화명나방 등) 잔재"],"가을 규산·퇴비·토양개량제 시용 적기(토양검정 권장).","볏짚 처리·가을갈이로 월동 해충·병원균 감소."]
+];
+const WN=[0,0,"휴지기·준비기",["해충 월동 잔재 점검"],"토양검정 후 규산·석회·퇴비 계획.","농기계 점검, 종자 구입·소독 준비(2~3월)."];
+const CM={"고추":{4:"육묘·정식 준비, 저온 주의",5:"정식·활착, 지지대 설치",6:"장마 전 탄저·역병 예방, 칼슘 보충",7:"장마 후 탄저·역병 집중, 담배나방·총채벌레, 웃거름(질소+칼륨)",8:"수확·병과 제거, 고온 낙과 주의",9:"병 번짐 주의, 웃거름 자제",10:"마지막 수확, 병든 과실·잔재 제거",11:"포장 정리, 퇴비 시용"},"들깨":{5:"파종·육묘",6:"정식, 제초",7:"순지르기, 파밤나방 점검",8:"녹병·시들음, 웃거름 소량",9:"노린재·진딧물 점검, 잎 수확 마감",10:"꼬투리 70~80% 갈변 때 수확, 이슬 있을 때 베기",11:"건조·탈곡"},"고구마":{5:"순 심기",6:"활착·제초, 질소 자제(잎 과번성 방지)",7:"굼벵이·나방류 점검",8:"가뭄 시 물주기",9:"수확 시기 판단, 멧돼지 피해",10:"서리 전 수확, 큐어링(30~33℃ 3~5일) 후 13~15℃ 저장",11:"저장 부패 점검"}};
+function now(){
+ const n=baseDate(),m=n.getMonth()+1,d=n.getDate(),wk=["일","월","화","수","목","금","토"][n.getDay()];
+ let cur=null;
+ const e=new Date(n.getTime()-R[rg()].off*864e5),em=e.getMonth()+1,ed=e.getDate();
+ if(!(em<4||em==12||(em==11&&ed>=10))){for(const p of P){if(em>p[0]||(em==p[0]&&ed>=p[1]))cur=p}}
+ if(!cur)cur=WN;
+ const t0=new Date(n.toDateString()),days=k=>Math.round((t0-new Date(dt(k)+"T00:00"))/864e5);
+ const ht=days("h"),tt=days("t");
+ const hl=ht==null?"":(ht>=0?`출수 후 ${ht}일째`:`출수 ${-ht}일 전`),tl=tt==null?"":`이앙 후 ${tt}일째`;
+ let h=`<div class="card"><div class="d">기기 시계 기준</div><div class="t" style="font-size:20px">${n.getFullYear()}년 ${m}월 ${d}일 (${wk}) ${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}</div>${(hl||tl)?`<div style="margin-top:4px">${[tl,hl].filter(Boolean).map(x=>`<span class="tag" style="margin:0 6px 0 0">${x}</span>`).join("")}</div>`:`<div class="d">벼 달력 탭에 이앙일·출수일을 넣으면 경과일도 표시돼요.</div>`}</div>`;
+ h+=`<div class="card res" style="display:none"><div class="d">지금 벼 시기</div><h3>🌾 ${cur[2]}</h3><p><b>⚠ 이 시기 병해충</b></p><ul>${cur[3].map(x=>`<li>${x}</li>`).join("")}</ul><p><b>🧪 영양·비료</b><br>${cur[4]}</p><p><b>✅ 이번 시기 핵심</b><br>${cur[5]}</p></div>`;
+ h+=stageCard();h+=myCrops();h+=regCard();const oc=Object.keys(CM).filter(k=>CM[k][m]);
+ if(oc.length)h+=`<div class="card res"><div class="d">${m}월 다른 작물</div>${oc.map(k=>`<p><b>${k}</b> · ${CM[k][m]}</p>`).join("")}</div>`;
+ h+=`<div class="card d">올해 날씨(비·태풍·고온)에 따라 달라집니다. 증상이 보이면 <b>병해충</b> 탭에서 확인하거나, 사진과 날씨를 농업기술센터에 알려 주세요.</div>`;
+ $("#view").innerHTML=h;
+}
+const R={
+buan:{n:'전북 부안',off:7,p:'서해안 평야·간척지입니다. 벼멸구·흰등멸구는 서남해안으로 먼저 날아오는 경향이 있어 7~9월 밑동 점검이 중요합니다. 태풍·염풍·침수 뒤에는 흰잎마름병과 이삭 마름을 주의하세요. 간척지 논은 염농도가 높으면 생육 불량과 쭉정이가 늘 수 있습니다.',nu:'간척지·염기성 논은 규산·유기물 보충과 물관리(염 씻어내기)가 핵심입니다. 만생종은 이삭거름 과다 시 도복이 늘어 출수 25일 전 기준을 지키세요.'},
+jbp:{n:'전북 김제·정읍·익산',off:7,p:'호남평야 만생종 중심입니다. 벼멸구·흰등멸구 비래, 잎집무늬마름병, 출수기 비가 많은 해의 이삭도열병을 주의하세요.',nu:'이삭거름은 출수 25일 전, 규산은 수확 후~써레질 전에 시용하세요.'},
+jn:{n:'전남 나주·해남',off:5,p:'고온다습한 남부입니다. 도열병, 벼멸구 비래, 출수기 고온 장해가 잦습니다.',nu:'고온기 질소 과다를 피하고 규산·칼리를 보충하세요.'},
+cn:{n:'충남 당진·서산',off:3,p:'서해안 간척지가 많습니다. 태풍·염풍 뒤 흰잎마름병, 멸구류, 쭉정이를 주의하세요.',nu:'간척지는 염 관리와 규산·유기물 시용이 중요합니다.'},
+gg:{n:'경기 이천·여주',off:0,p:'중부 평야입니다. 잎·이삭도열병, 줄무늬잎마름병(애멸구), 노린재를 주의하세요.',nu:'평균적인 시기가 기준입니다. 이삭거름은 출수 25일 전입니다.'},
+gw:{n:'강원 철원',off:-5,p:'저온 지역입니다. 냉해, 저온 출수 장해, 도열병을 주의하세요.',nu:'질소 과다를 피하고 저온 때는 물을 깊게 대세요.'},
+gb:{n:'경북 안동·상주',off:2,p:'일교차가 큰 분지입니다. 이삭도열병, 노린재, 고온 장해를 주의하세요.',nu:'규산·칼리로 줄기를 튼튼하게 하세요.'},
+gn:{n:'경남 밀양·김해',off:5,p:'남부 고온다습 지역입니다. 멸구류, 도열병, 태풍 피해를 주의하세요.',nu:'태풍 후 즉시 병해 점검, 규산·칼리를 보충하세요.'}};
+const rg=()=>R[st.r]?st.r:'buan';
+function reg(){$('#reg').innerHTML=`<label style='margin:0 0 4px'>📍 지역</label><select onchange='st.r=this.value;save();render()'>`+Object.keys(R).map(k=>`<option value='${k}' ${k==rg()?'selected':''}>${R[k].n}${k=='buan'?' (기본)':''}</option>`).join('')+`</select>`}
+function regCard(){const r=R[rg()];return `<div class='card res'><div class='d'>📍 ${r.n} 지역 참고</div><p><b>⚠ 지역 병해충 경향</b><br>${r.p}</p><p><b>🧪 영양·시비 참고</b><br>${r.nu}</p><div class='d'>지역 날짜는 평년 추정치입니다. 품종·이앙일에 따라 1~2주 차이가 납니다.</div></div>`}
+Object.assign(CM,{
+'참깨':{5:'파종(지온 15℃ 이상), 솎기',6:'제초·북주기, 장마 전 배수로 정비',7:'역병·시들음·세균성 점무늬 점검, 개화기 칼리 소량',8:'노린재·진딧물 점검, 하순 수확 준비',9:'아래 꼬투리 갈변 시 베어 세워 건조(비 피하기)'},
+'오이':{4:'육묘·정식 준비',5:'정식·유인',6:'수확 시작, 노균병·흰가루병 예방, 웃거름 10~15일 간격 소량',7:'응애·진딧물·총채벌레, 칼슘 보충',8:'가을재배 정식, 바이러스 매개충 주의',9:'가을 수확, 노균병 점검',10:'잔재 정리, 시설은 보온'},
+'양파':{9:'육묘 파종(중순경), 종자 소독',10:'밭 만들기(퇴비·석회), 하순 정식 시작',11:'정식 마무리, 활착, 월동 전 제초',3:'월동 후 웃거름 시작, 노균병·잎마름 점검',4:'웃거름은 수확 40일 전까지, 구 비대',5:'잎 60~70% 쓰러지면 수확',6:'건조 후 저장'},
+'대파':{3:'봄 정식·활착',4:'활착, 제초',5:'배토 시작, 파총채벌레·진딧물',6:'배토·웃거름, 장마 전 배수',7:'고온 장해, 잎마름·녹병 점검',8:'파좀나방·파총채벌레, 웃거름',9:'배토, 가을 수확 시작',10:'수확, 월동용 배토',11:'월동 준비·보온'},
+'쪽파':{8:'종구 소독·준비(하순 심기)',9:'심기·활착, 제초, 파총채벌레·파좀나방',10:'웃거름 1회, 노균병·잎마름 예방',11:'가을 수확 시작, 월동 전 피복',3:'월동 후 웃거름, 노균병 점검',4:'수확'}});
+Object.assign(crops,{
+'참깨':[['5월 상~중순','파종(지온 15℃ 이상), 발아 후 솎기'],['6~7월','제초·북주기, 장마 전 배수로 정비, 역병·시들음병은 고인 물 금지로 예방'],['7~8월','개화기 칼리 위주 소량 웃거름, 노린재·진딧물·점무늬 점검'],['8월 하~9월 상','아래 꼬투리 갈변 시 베어 세워 말리기(비 맞히지 않기)']],
+'오이':[['4~5월','정식·유인줄 설치, 활착'],['6~7월','수확 시작, 노균병·흰가루병 예방, 웃거름 10~15일 간격 소량 분시'],['7~8월','응애·진딧물·총채벌레, 칼슘 보충, 고온 시 관수'],['8월 하','가을재배 정식, 바이러스 매개충 주의']],
+'양파':[['9월 중순','육묘 파종, 종자 소독'],['10월 하~11월 상','정식(퇴비·석회 기비), 활착'],['3~4월','월동 후 웃거름(수확 40일 전까지), 노균병·잎마름 점검'],['5월 하~6월','잎 60~70% 쓰러질 때 수확, 건조 후 저장']],
+'대파':[['3~4월','봄 정식, 활착'],['5~7월','배토(북주기)·웃거름, 장마 전 배수, 파총채벌레·파좀나방'],['8~9월','생육 회복기 웃거름, 녹병·잎마름 점검'],['10~11월','수확, 월동용 배토']],
+'쪽파':[['8월 하~9월 상','종구 소독 후 심기, 활착'],['9~10월','제초, 웃거름 1회, 파총채벌레·파좀나방 점검'],['11월','가을 수확 시작, 월동 전 피복'],['3~4월','월동 후 웃거름, 노균병 점검, 수확']]});
+function tip(){
+ const D=[['🛡 방제약 고르는 기본 원칙',['예방과 치료를 구분하세요. 도열병·세균성벼알마름병은 번지기 전(출수 직전) 예방이 효과적이고, 멸구는 발생 초기에 밑동까지 닿게 뿌려야 합니다.','같은 계통 약제를 계속 쓰면 저항성이 생기니 계통을 바꿔 돌려 쓰세요.','라벨에서 작물·병해충 등록, 희석배수, 사용 횟수, 수확 전 사용일을 반드시 확인하세요.','바람 약한 아침·저녁에 뿌리고, 비 직전·직후는 피하세요. 벌·양잠 독성과 이웃 논 피해도 확인하세요.']],
+['🎯 병해충별 방제 방향(벼)',['이삭도열병: 출수 직전~출수기에 예방. 비·저온다습 예보면 앞당깁니다.','잎도열병: 발견 초기에 방제하고 질소를 줄입니다.','흰잎마름병: 태풍·침수 직후 바로 방제합니다. 번진 뒤엔 효과가 떨어집니다.','세균성벼알마름병: 출수기 예방이 핵심이며, 발병 후엔 한계가 있습니다.','벼멸구·흰등멸구: 비래 확인 후 밑동에 닿게(물량 충분히, 논물 상태는 라벨 확인) 방제합니다.','노린재: 출수 후 방제하고 논둑 잡초를 정리합니다.','벼물바구미: 이앙 직후 입제 처리 또는 육묘상 처리로 막습니다.']],
+['🧪 영양(비료) 종류와 시기',['질소(N): 잎과 분얼을 키웁니다. 밑거름 → 분얼비(이앙 7~10일 후) → 이삭거름(출수 25일 전). 과다하면 도열병·도복이 늘어납니다.','인산(P): 활착과 뿌리, 초기 분얼에 중요합니다. 밑거름으로 써레질 전에 줍니다.','칼리(K): 줄기를 튼튼하게 하고 병 저항성을 높입니다. 밑거름과 이삭거름 때 나눠 줍니다.','규산(Si): 벼의 대표 양분입니다. 도열병·도복을 줄이며 수확 후~써레질 전에 시용합니다.','칼슘·마그네슘(석회·고토): 산성 토양 개선, 고추 배꼽썩음 예방에 씁니다. 토양검정 후 시용하세요.','퇴비·유기물: 지력을 높이고 가을에 시용합니다. 간척지는 염 완화에도 도움됩니다.','엽면시비: 보조 수단입니다. 토양 시비를 대신하지 않습니다.']]];
+ $('#view').innerHTML=D.map(x=>`<div class='card res'><h3>${x[0]}</h3><ul>${x[1].map(y=>`<li style='margin:6px 0'>${y}</li>`).join('')}</ul></div>`).join('')+`<div class='card d'>구체적인 제품·시비량은 토양검정 결과와 품종에 따라 달라집니다. 지역·논 상태를 농업기술센터에 문의하세요.</div>`;
+}
+Object.assign(crops,{
+'상추':[['3~4월·9월','서늘할 때 잘 자랍니다. 파종하거나 모종을 심으세요.'],['정식 후','활착되면 물은 아침에 적게 자주, 웃거름은 2~3주 후 소량.'],['5~6월','고온·장마엔 꽃대(추대)와 무름병 주의. 차광하고 배수로를 정비하세요.'],['수확','겉잎부터 따서 오래 수확하고, 아침에 수확하세요.']],
+'가지':[['4~5월','밤 기온 15℃ 이상 된 뒤 모종을 정식합니다.'],['6~7월','곁순 정리와 지지대, 칼륨·칼슘 웃거름을 2~3주 간격으로.'],['7~8월','응애·진딧물·시들음병 점검, 마르지 않게 관수.'],['8~10월','열매에 광택이 있을 때 수확, 늦서리 전 마무리.']],
+'배추':[['8월 하~9월 상','김장배추 파종·정식'],['9~10월','진딧물·무름병·뿌리혹병 점검, 웃거름 2회'],['11월','결구 확인 후 서리 전후 수확']],
+'무':[['8월 하~9월 상','파종 후 솎기 2~3회'],['9~10월','진딧물·벼룩잎벌레 점검, 웃거름 1회'],['10~11월','서리 전 수확(뿌리가 얼면 바람들이)']]});
+Object.assign(CM,{'상추':{3:'파종·모종 준비',4:'정식·활착',5:'수확 시작, 고온 전 차광 준비',6:'추대·무름병 주의, 장마 배수',9:'가을 파종·정식',10:'가을 수확, 서리 전 보온'},'가지':{4:'모종 준비',5:'정식(밤 15℃ 이상)',6:'곁순·지지대, 웃거름',7:'응애·진딧물·시들음병 점검, 관수',8:'수확 최성기, 칼륨·칼슘',9:'수확, 병든 포기 정리',10:'늦서리 전 마무리·잔재 정리'},'배추':{8:'김장배추 파종',9:'정식, 진딧물·무름병',10:'웃거름·결구',11:'서리 전후 수확'},'무':{8:'파종',9:'솎기, 진딧물 점검',10:'웃거름 1회',11:'서리 전 수확'}});
+const FL={
+rain:{t:'🌧 비·태풍 뒤 대처',s:'a',n:{
+a:{q:'논이 물에 잠겼었나요?',o:[['예, 잠겼었다','b'],['아니오','c']]},
+b:{q:'물이 다 빠졌나요?',o:[['아직 안 빠졌다','r1'],['빠졌다','r2']]},
+c:{q:'벼가 쓰러졌나요?',o:[['예, 쓰러졌다','r3'],['아니오, 서 있다','r4']]},
+r1:{r:'먼저 물부터 빼세요',d:['물꼬를 열고 배수로를 뚫어 주세요.','잎에 진흙이 덮였으면 물이 빠진 뒤 맑은 물로 씻어 주세요.','물이 빠지면 이 흐름을 다시 시작하세요.'],x:['물이 고인 채로 비료나 약을 주지 마세요.']},
+r2:{r:'침수 뒤 병 예방',d:['3일 안에 흰잎마름병(잎 끝에서 물결 모양 노란 줄)을 확인하세요.','증상이 있거나 이웃 논이 침수됐으면 등록약제 방제를 판단하세요(라벨 확인).','맑은 물로 갈아 5~7cm 깊이로 유지하세요.'],x:['질소 비료를 급히 더 주지 마세요. 병이 더 번집니다.']},
+r3:{r:'쓰러진 벼 대처',d:['물을 빼서 논바닥을 굳히세요.','쓰러진 곳은 이삭에서 싹이 틀 수 있어 수확 적기를 앞당겨 점검하세요.','수확은 쓰러진 곳부터 서두르세요.'],x:['무리하게 일으켜 세우다 줄기를 꺾지 마세요.']},
+r4:{r:'잎 상처 점검',d:['2~3일 뒤 논을 돌며 잎 끝 찢김과 변색을 확인하세요.','잎 끝이 노랗게 마르면 흰잎마름병 흐름을 확인하세요.'],x:['증상 없을 때 약부터 뿌리지 마세요.']}}},
+harv:{t:'🌾 수확 시기 판단',s:'a',n:{
+a:{q:'이삭 낟알이 얼마나 누렇게 됐나요?',o:[['70% 미만','r1'],['70~85%','r2'],['85~90%','b'],['90% 이상','r3']]},
+b:{q:'앞으로 3일 안에 비 예보가 있나요?',o:[['있다','r4'],['없다','r5']]},
+r1:{r:'아직 이릅니다',d:['5~7일 뒤 다시 확인하세요.','물떼기를 천천히 진행하세요.'],x:['서둘러 베지 마세요. 쭉정이와 청미가 늘어납니다.']},
+r2:{r:'곧 수확 준비',d:['콤바인과 건조기를 점검하세요.','3~5일 뒤 황변 비율을 다시 확인하세요.']},
+r3:{r:'바로 수확하세요',d:['날씨 좋은 날 바로 수확하세요.','낱알이 깨지거나 쓰러지기 전에 서두르세요.'],x:['더 미루지 마세요. 도복과 미질 저하가 생깁니다.']},
+r4:{r:'비 전후를 나눠 판단',d:['이슬이 마른 오후에 수확하세요.','젖은 벼는 수분이 높아 건조비가 늘어납니다. 가능하면 비 그친 뒤 맑은 날 하세요.','수분이 25%를 넘으면 건조기를 쓰세요.']},
+r5:{r:'지금이 적기입니다',d:['낱알 수분이 20~25%일 때 수확하세요.','수확 뒤 15% 안팎까지 건조하세요.']}}},
+yel:{t:'🍃 잎이 노래요',s:'a',n:{
+a:{q:'언제 생기나요?',o:[['이앙 후 한 달 안','b'],['분얼~이삭 나오기 전','c'],['출수 후','d']]},
+b:{q:'뿌리를 뽑아 보니 어떤가요?',o:[['검고 냄새가 난다','r1'],['흰색이고 건강하다','r2']]},
+c:{q:'논 전체인가요, 일부 포기인가요?',o:[['논 전체가 옅게 노랗다','r3'],['일부에 반점·무늬가 있다','r4']]},
+d:{q:'어느 잎이 노란가요?',o:[['아래 잎만','r5'],['위 잎까지 일찍 마른다','r6']]},
+r1:{r:'뿌리 가스 피해 가능성',d:['물을 빼서 3~5일 말려 뿌리에 산소를 주세요.','다시 물을 대고 관찰하세요.'],x:['질소 비료부터 더 주지 마세요.']},
+r2:{r:'활착 뒤 양분 부족 가능성',d:['이앙 7~10일 뒤 분얼비 시기인지 확인하세요.','시기가 되었으면 분얼비를 주세요.']},
+r3:{r:'질소 부족 가능성',d:['이삭거름 시기(출수 25일 전)인지 달력에서 확인하세요.','잎색이 연하면 시기에 맞춰 시비하세요.'],x:['잎색이 짙은 논에는 질소를 주지 마세요.']},
+r4:{r:'병 가능성',d:['🔍 병해충 탭에서 잎 증상으로 확인하세요.','사진을 찍어 마을 담당자에게 보내 물어보세요.']},
+r5:{r:'정상 노화일 수 있습니다',d:['등숙기에는 아래 잎이 노랗게 되는 것이 자연스럽습니다.','줄기가 약해지지 않았는지만 확인하세요.']},
+r6:{r:'양분·병 점검',d:['밑동과 뿌리 상태를 확인하세요.','이삭 병이나 멸구 피해를 같이 확인하세요.']}}}};
+const FK=Object.keys(FL);
+const setF=i=>{st.f=FK[i];st.p=[];render()};
+const pick=i=>{st.p.push(i);render()};
+function flow(){
+ if(!st.f){$('#view').innerHTML=`<div class='card'><b>어떤 상황인가요?</b>`+FK.map((k,i)=>`<button class='opt' onclick='setF(${i})'>${FL[k].t}</button>`).join('')+`</div><div class='card d'>질문에 답하면 순서대로 해야 할 일을 알려드립니다. 초보 농부도 따라 하기 쉽게 만들었습니다.</div>`;return}
+ const F=FL[st.f];st.p=st.p||[];
+ let id=F.s,h=`<button class='back' onclick='st.f=null;render()'>← 상황 다시 선택</button><div class='card'>`;
+ st.p.forEach(a=>{const nd=F.n[id];h+=`<div class='fb'>${nd.q}</div><div class='fa'>↓ ${nd.o[a][0]}</div>`;id=nd.o[a][1]});
+ const nd=F.n[id];
+ if(nd.q){h+=`<div class='fb'>${nd.q}</div><div class='fa'>↓</div>`+nd.o.map((o,i)=>`<button class='opt' onclick='pick(${i})'>${o[0]}</button>`).join('')}
+ else{h+=`<div class='fb ok'>✅ ${nd.r}</div><p><b>지금 할 일</b></p><ol>${nd.d.map(x=>`<li>${x}</li>`).join('')}</ol>${nd.x?`<p><b>⛔ 하지 말 것</b></p><ul>${nd.x.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}<div class='d'>확신이 안 서면 사진을 찍어 마을 담당자에게 보내거나 관할 농업기술센터에 문의하세요.</div><button class='back' onclick='st.p=[];render()'>처음부터 다시</button>`}
+ $('#view').innerHTML=h+`</div>`;
+}
+delete st.b;delete st.w;
+const fmtI=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const baseDate=()=>st.b?new Date(st.b+'T12:00'):new Date();
+const defT=()=>fmtI(new Date(2026,5,5-(7-R[rg()].off)));
+const dt=k=>{const t=st.t||defT();return k=='t'?t:(st.h||fmtI(add(new Date(t+'T00:00'),(+st.v||82))))};
+const TI={w:'💧',s:'🛡',n:'🧪',a:'🌱'};
+const PL=[
+['t',-7,'a','종자소독·침종','소독액 처리 후 충분히 헹굼. 키다리병·도열병 예방의 첫 단추'],
+['t',-3,'n','밑거름 시용','써레질 전 복합비료(인산 포함). 규산·퇴비를 이미 넣었다면 생략'],
+['t',0,'w','이앙 + 물 5~7cm','활착까지 물을 깊게 대 모를 보호. 저온이면 더 깊게'],
+['t',3,'s','초기 제초제','이앙 3~10일, 라벨 시기 준수. 물 깊이 유지, 물꼬 열지 않기'],
+['t',7,'n','분얼비','이앙 7~10일 후. 잎색이 진하면 줄이세요'],
+['t',7,'s','벼물바구미·초기 점검','잎에 줄무늬 식흔 확인, 많으면 등록약제'],
+['t',14,'w','얕게 걸러대기','3~5cm로 얕게 대 분얼 촉진. 마르게 두지 않기'],
+['t',35,'w','중간물떼기 시작','논 가장자리가 갈라질 정도까지 7~10일. 뿌리 활력↑, 무효분얼 억제'],
+['t',45,'w','물떼기 끝, 다시 물대기','3~5cm 걸러대기로 복귀'],
+['h',-32,'s','병해충 선제 점검','잎집무늬마름병·잎도열병 확인, 멸구 비래 소식 확인'],
+['h',-25,'n','이삭거름','잎색 진하면 감량·생략. 질소 과다는 도열병·도복↑'],
+['h',-15,'w','수잉기 물 충분히','저온(17℃↓)·가뭄엔 물을 깊게(냉해 예방)'],
+['h',-10,'s','이삭도열병 1차 점검','병반 있으면 예방 방제 판단. 비·저온다습 예보면 앞당김'],
+['h',-5,'s','출수 전 예방 방제 판단','이삭도열병·세균성벼알마름병 (라벨 시기 확인)'],
+['h',-3,'w','개화·수정기 물 마르지 않게','5~7cm 이상 유지. 35℃↑면 깊게 대고 가능하면 새물'],
+['h',0,'a','출수기','이삭이 패는 날. 실제 날짜를 출수일로 입력하면 이후 일정이 정확해집니다'],
+['h',7,'s','노린재·이삭누룩병 점검','출수 후 노린재 방제 판단, 논둑 잡초 정리'],
+['h',10,'w','걸러대기','3~5cm 대고 소진 후 다시 대기. 완전히 마르게 하지 않기'],
+['h',15,'s','벼멸구·흰등멸구 점검','밑동 확인 주 1~2회. 한 곳이 원형으로 마르면 즉시 방제 판단'],
+['h',20,'s','태풍·비 뒤 즉시 점검','흰잎마름병·도열병·도복 확인(날씨 선택 참고)'],
+['h',22,'w','물떼기(낙수) 시작','수확 15~20일 전부터 서서히 배수. 너무 일찍은 쭉정이·미질↓'],
+['h',40,'a','수확 적기 시작','낟알 85~90% 황변, 수분 20~25%'],
+['h',48,'a','수확 마감','늦으면 도복·쌀 깨짐↑. 건조는 수분 15% 안팎'],
+['h',55,'n','가을 토양 관리','규산·퇴비·토양개량제(토양검정 후), 볏짚 처리, 가을갈이']];
+const SG={
+pre:{n:'이앙 준비',p:['키다리병','잘록병','냉해'],w:['이앙 직전 써레질 후 5~7cm 물 대기'],s:['종자소독·육묘상 처리 확인','논둑 잡초 정리(벼물바구미 서식처)'],nu:['밑거름은 써레질 전']},
+est:{n:'활착기(이앙 후 1주)',p:['벼물바구미','초기 잡초','냉해'],w:['5~7cm로 깊게 대 모 보호','저온이면 더 깊게'],s:['초기 제초제(이앙 3~10일, 라벨 시기)','벼물바구미 점검'],nu:['분얼비(이앙 7~10일 후)']},
+till:{n:'분얼기',p:['잎도열병','줄무늬잎마름병(애멸구)','벼물바구미','잡초'],w:['3~5cm 얕게 걸러대기로 분얼 촉진','마르게 두지 않기'],s:['잎도열병 초기 점검','애멸구 모니터'],nu:['잎색 보며 분얼비 가감','규산 부족 논 보충']},
+mid:{n:'중간물떼기기',p:['잎도열병(다습 후)','잎집무늬마름병 초기'],w:['논 가장자리 갈라질 때까지 7~10일 물 빼기','뿌리 활력↑, 무효분얼 억제'],s:['병반 확인 위주(이 기간 약제 필요한 경우 드묾)'],nu:['물떼기 중 질소 추가 금지']},
+tl2:{n:'분얼 후기~유수형성 전',p:['잎집무늬마름병','잎도열병','멸구 비래 초기'],w:['3~5cm 걸러대기, 마르게 두지 않기'],s:['잎집무늬마름병·멸구 점검'],nu:['이삭거름 준비(잎색 확인)']},
+pani:{n:'이삭거름·유수형성기',p:['잎집무늬마름병','잎도열병','벼멸구 비래(서남해안 선행)'],w:['3~5cm 걸러대기'],s:['밀식·질소 많은 논은 예방 방제 판단'],nu:['이삭거름(출수 25일 전), 잎색 진하면 감량·생략','칼리 보충']},
+boot:{n:'수잉기(이삭 배는 시기)',p:['이삭도열병','세균성벼알마름병','이삭누룩병'],w:['5~7cm 이상 충분히, 저온·가뭄엔 깊게'],s:['출수 7~10일 전 이삭도열병 점검','출수 3~5일 전 예방 방제 판단'],nu:['추가 질소 금지']},
+head:{n:'출수·개화 수정기',p:['이삭도열병','세균성벼알마름병','이삭누룩병','노린재'],w:['5~7cm 이상 유지(마르면 수정 불량)','35℃↑면 깊게'],s:['비·저온다습이면 이삭도열병 추가 방제 판단','노린재 방제 시기 준비'],nu:['잎색이 많이 연할 때만 실거름 소량']},
+fill:{n:'등숙 초기',p:['벼멸구','흰등멸구','흑명나방','노린재','흰잎마름병'],w:['3~5cm 걸러대기','출수 3주쯤부터 서서히 물 빼기 준비'],s:['밑동 멸구 점검(주 1~2회)','태풍·비 뒤 흰잎마름병 점검'],nu:['웃거름 불필요','잎색 너무 연하면 소량 엽면시비(효과 제한)']},
+late:{n:'등숙 후기·물떼기',p:['벼멸구','도복','수발아(비 많을 때)'],w:['서서히 배수(수확 15~20일 전부터)','너무 일찍 빼면 쭉정이·미질↓'],s:['수확 전 사용 제한일 확인','멸구 마지막 확인'],nu:['시비 없음']},
+harv:{n:'수확기',p:['도복','수발아'],w:['논바닥을 단단히 말려 수확기 진입'],s:['방제 종료(수확 전 사용일 이내 약제 금지)'],nu:['수확 후 규산·퇴비 계획']},
+done:{n:'수확 후 정리',p:['월동 해충 잔재'],w:['가을갈이 전 배수 정리'],s:['볏짚·그루터기 처리로 월동 해충 감소'],nu:['규산·퇴비·토양개량제(토양검정 후)']}};
+const GR={pre:'a',est:'a',till:'a',mid:'a',tl2:'a',pani:'b',boot:'b',head:'b',fill:'c',late:'c',harv:'c',done:'c'};
+const WK=['rain','typ','heat','cold','dry'];
+const W={
+rain:{t:'🌧 장마·비 계속',g:{a:'논둑 배수로 정비, 물 넘치지 않게. 비 그친 뒤 잎도열병·잎집무늬마름병 점검. 비 직전·직후 약·비료 금지.',b:'이삭도열병·이삭누룩병·세균성벼알마름병 위험이 가장 큽니다. 비 갠 틈에 예방 방제를 판단하세요. 물은 유지.',c:'비 뒤 멸구·흰잎마름병·노린재 점검, 배수해 도복 방지. 수확 전 사용일 준수.'}},
+typ:{t:'🌀 태풍 예보·직후',g:{a:'예보 시 논물을 깊게(10cm 내외) 대 바람 피해 줄이기. 침수되면 물 먼저 빼기.',b:'예보 시 물 깊게. 직후 3일 안에 흰잎마름병·도열병 점검과 방제 판단. 해안 염풍 피해가 의심되면 가능한 한 맑은 물로 갈아 대기.',c:'직후 침수·도복 확인, 쓰러진 곳은 수확 적기를 앞당겨 점검, 멸구·도열병 확인.'}},
+heat:{t:'🔥 폭염(35℃↑)',g:{a:'낮에 물을 깊게, 아침·저녁 새물로 지온 낮추기.',b:'출수·개화기 35℃ 이상은 불임 위험. 낮 물을 깊게(10cm) 대고 가능하면 새물을 흘려 주세요. 질소 과다 금지.',c:'고온 등숙은 미질 저하. 물을 마르지 않게 걸러대기, 노린재·멸구 증가 주의.'}},
+cold:{t:'🥶 저온',g:{a:'활착기엔 물을 7~10cm로 깊게 대 보온.',b:'수잉기 17℃ 이하 저온은 냉해(불임) 위험. 물을 15~20cm로 깊게 대 보온하세요.',c:'등숙이 늦어집니다. 수확 적기를 늦춰 잡고 서리 전 수확 여부를 확인하세요.'}},
+dry:{t:'🏜 가뭄',g:{a:'물이 마르지 않게 하고 물대기 주기를 줄이세요.',b:'수잉~출수기 물 부족은 피해가 큽니다. 물대기 우선순위를 가장 높게 두세요.',c:'등숙기엔 간단관개 유지. 물떼기는 수확 15~20일 전부터.'}}};
+const setW=i=>{st.w=i<0?'':WK[i];render()};
+function curStage(){const t0=new Date(baseDate().toDateString()),dd=k=>Math.round((t0-new Date(dt(k)+'T00:00'))/864e5),tD=dd('t'),hD=dd('h');
+ return hD>=48?'done':hD>=40?'harv':hD>=28?'late':hD>=10?'fill':hD>=-3?'head':hD>=-15?'boot':hD>=-30?'pani':tD>=45?'tl2':tD>=35?'mid':tD>=7?'till':tD>=0?'est':'pre'}
+function stageCard(){
+ const k=curStage(),S=SG[k],t0=new Date(baseDate().toDateString()),dd=x=>Math.round((t0-new Date(dt(x)+'T00:00'))/864e5),tD=dd('t'),hD=dd('h');
+ const li=a=>a.map(x=>`<li>${x}</li>`).join('');
+ const wc=`<button class='${st.w?'':'on'}' onclick='setW(-1)'>☀ 평년</button>`+WK.map((x,i)=>`<button class='${st.w==x?'on':''}' onclick='setW(${i})'>${W[x].t}</button>`).join('');
+ const up=PL.map(p=>({d:add(new Date(dt(p[0])+'T00:00'),p[1]),p})).filter(o=>o.d>=t0&&o.d<=add(t0,14)).sort((a,b)=>a.d-b.d).slice(0,5);
+ return `<div class='card res'><div class='d'>지금 벼 단계 · 이앙 후 ${tD}일 · 출수 ${hD<0?(-hD)+'일 전':hD+'일 후'}</div><h3>🌾 ${S.n}</h3><p><b>⚠ 이 시기에 많이 발생</b><br>${S.p.join(' · ')}</p><p><b>💧 물관리</b></p><ul>${li(S.w)}</ul><p><b>🛡 방제(선제)</b></p><ul>${li(S.s)}</ul><p><b>🧪 영양</b></p><ul>${li(S.nu)}</ul><p><b>오늘 날씨는?</b></p><div class='chips'>${wc}</div>${st.w?`<div class='warn'>${W[st.w].g[GR[k]]}</div>`:''}${up.length?`<p><b>📌 앞으로 2주 안에 준비할 일</b></p><ul>${up.map(o=>`<li>${fmt(o.d)} ${TI[o.p[2]]} ${o.p[3]}</li>`).join('')}</ul>`:''}</div>`;
+}
+const CF=['','w','s','n','a'];
+const setCF=i=>{st.cf=CF[i];render()};
+function cal(){
+ const t0=new Date(baseDate().toDateString()),f=st.cf||'',custom=st.t||st.h;
+ const items=PL.map(p=>({d:add(new Date(dt(p[0])+'T00:00'),p[1]),p})).sort((a,b)=>a.d-b.d).filter(o=>!f||o.p[2]==f);
+ const ni=items.findIndex(o=>o.d>=t0);
+ const ch=[['','전체'],['w','💧 물'],['s','🛡 방제'],['n','🧪 영양'],['a','🌱 작업']].map((c,i)=>`<button class='${f==c[0]?'on':''}' onclick='setCF(${i})'>${c[1]}</button>`).join('');
+ $('#view').innerHTML=`<div class='card'><div class='row'><div><label>이앙일</label><input type='date' value='${dt('t')}' onchange='st.t=this.value;save();render()'></div><div><label>출수일</label><input type='date' value='${dt('h')}' onchange='st.h=this.value;save();render()'></div></div><div class='d'>${custom?'직접 입력한 날짜입니다.':'2026년 기본 예상값입니다(지역별 보정).'} 이삭이 패면 실제 출수일로 바꾸세요.</div>${custom?`<button class='back' onclick='delete st.t;delete st.h;save();render()'>기본값으로</button>`:''}</div>`+stageCard()+`<div class='chips'>${ch}</div><div class='tl'>`+items.map((o,k)=>`<div class='it ${k==ni?'now':(o.d<t0?'past':'')}'><div class='d'>${o.d.getFullYear()}/${fmt(o.d)} ${TI[o.p[2]]}${k==ni?"<span class='tag'>다음</span>":''}</div><div class='t'>${o.p[3]}</div><div class='d' style='font-size:15px'>${o.p[4]}</div></div>`).join('')+`</div>`;
+}
+function reg(){
+ const b=baseDate();
+ $('#reg').innerHTML=`<div class='row'><div><label style='margin:0 0 4px'>📍 지역</label><select onchange='st.r=this.value;save();render()'>`+Object.keys(R).map(k=>`<option value='${k}' ${k==rg()?'selected':''}>${R[k].n}${k=='buan'?' (기본)':''}</option>`).join('')+`</select></div><div><label style='margin:0 0 4px'>📆 기준일${st.b?'(선택)':'(오늘)'}</label><input type='date' value='${fmtI(b)}' onchange='st.b=this.value;render()'></div></div>${st.b?`<button class='back' onclick='st.b=null;render()'>오늘 날짜로 되돌리기</button>`:''}`;
+}
+if(!st.t&&tab=='now')tab='plant';
+const VR=[['조생종(약 70일)',70],['중생종(약 78일)',78],['중만생종(약 82일, 기본)',82],['만생종(약 88일)',88]];
+function plant(){
+ const t0=new Date(baseDate().toDateString()),T=new Date(dt('t')+'T00:00'),H=new Date(dt('h')+'T00:00');
+ const dd=d=>Math.round((d-t0)/864e5),lab=n=>n==0?'오늘':n>0?`D-${n}`:`${-n}일 지남`;
+ const ev=[['🌱 모내기',T],['💧 중간물떼기 시작',add(T,35)],['🧪 이삭거름',add(H,-25)],['🌾 출수(이삭 팬)',H],['💧 물떼기 시작',add(H,22)],['🚜 수확 시작',add(H,40)],['🚜 수확 마감',add(H,48)]];
+ const hs=add(H,40),total=Math.max(1,Math.round((add(H,48)-T)/864e5)),pct=Math.min(100,Math.max(0,Math.round(-dd(T)/total*100))),since=-dd(T);
+ const f=d=>`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
+ $('#view').innerHTML=`<div class='card'><label style='margin-top:0'>🌱 모내기(이앙)한 날</label><input type='date' value='${dt('t')}' style='font-size:20px' onchange='st.t=this.value;save();render()'><div class='row'><div><label>품종 숙기</label><select onchange='st.v=this.value;save();render()'>${VR.map(v=>`<option value='${v[1]}' ${(+st.v||82)==v[1]?'selected':''}>${v[0]}</option>`).join('')}</select></div><div><label>이삭이 팬 날(모르면 비움)</label><input type='date' value='${st.h||''}' onchange='st.h=this.value;save();render()'></div></div><div class='d'>${st.t?'입력한 날짜로 계산했습니다.':'아직 입력 전입니다. 예시값(2026년 기본)으로 표시 중입니다.'} ${st.h?'출수일은 실제 값입니다.':'출수일은 예상입니다.'}</div></div><div class='card' style='text-align:center'><div class='d'>${since>=0?'모내기 후':'모내기까지'}</div><div style='font-size:40px;font-weight:800;color:var(--pri)'>${since>=0?since+'일째':'D-'+(-since)}</div><div style='background:var(--pri2);border-radius:8px;height:14px;margin:10px 0;overflow:hidden'><div style='background:var(--pri);height:100%;width:${pct}%'></div></div><div class='d'>모내기 → 수확 마감까지 ${pct}%</div></div><div class='card' style='background:var(--pri2)'><div class='d'>예상 수확(추수) 시작</div><div style='font-size:26px;font-weight:800'>${f(hs)}</div><div class='t'>${lab(dd(hs))} · 마감 ${f(add(H,48))}</div><div class='d'>낟알 85~90% 황변, 수분 20~25%가 기준입니다. 실제 수확 시기는 논에서 확인하세요.</div></div><div class='card'><b>한눈에 보는 일정</b><div class='tl' style='margin-top:10px'>${ev.map(e=>{const n=dd(e[1]);return `<div class='it ${n==0?'now':(n<0?'past':'')}'><div class='d'>${f(e[1])}</div><div class='t'>${e[0]} <span class='tag'>${lab(n)}</span></div></div>`}).join('')}</div></div><div class='d' style='padding:0 4px'>품종·지역·날씨에 따라 1~2주 달라질 수 있습니다. 이삭이 핌을 때 출수일을 입력하면 더 정확해집니다.</div>`;
+}
+const CD={
+'고추':{p:'정식일',h:[50,150],m:[[7,'활착 확인·지지대'],[25,'첫 웃거름·곁순 정리'],[45,'칼슘 보충, 탄저·역병 예방 점검'],[50,'풋고추 수확 시작'],[90,'홍고추 수확 시작'],[150,'수확 마감·잔재 정리']]},
+'들깨':{p:'파종(정식)일',h:[135,155],m:[[10,'솎기'],[30,'제초·북주기'],[50,'순지르기'],[60,'잎 수확 시작 가능'],[120,'꼬투리 갈변 확인 시작'],[145,'꼬투리 70~80% 갈변 시 수확']]},
+'고구마':{p:'순 심은 날',h:[110,140],m:[[7,'활착 확인·빈자리 보식'],[30,'제초·북주기'],[60,'질소 자제, 굼벵이 피해 점검'],[100,'시험 캐기로 크기 확인'],[110,'수확 시작(서리 전)'],[140,'수확 마무리·큐어링']]},
+'참깨':{p:'파종일',h:[95,110],m:[[10,'솎기(본잎 2~3장)'],[25,'제초·북주기'],[45,'개화 시작, 장마 대비 배수'],[70,'꼬투리 맺히는 시기, 노린재·역병 점검'],[95,'아래 꼬투리 갈변 시 수확'],[110,'수확 마감·건조']]},
+'오이':{p:'정식일',h:[35,90],m:[[7,'활착·유인'],[14,'곁순 정리'],[25,'웃거름 시작(10~15일 간격)'],[35,'첫 수확, 노균병·흰가루병 예방'],[90,'수확 마감']]},
+'양파':{p:'정식일(가을)',h:[205,225],m:[[14,'활착 확인'],[30,'월동 전 제초'],[120,'월동 후 웃거름 시작'],[150,'웃거름 마무리(수확 40일 전까지)'],[200,'수확 준비(잎 60~70% 쓰러짐)'],[210,'수확 시작']]},
+'대파':{p:'정식일',h:[100,150],m:[[14,'활착 확인'],[30,'1차 배토'],[60,'2차 배토·웃거름'],[90,'3차 배토'],[100,'수확 시작'],[150,'수확 마감·월동 준비']]},
+'쪽파':{p:'종구 심은 날',h:[60,80],m:[[10,'활착 확인'],[20,'제초'],[30,'웃거름 1회'],[45,'노균병 예방 점검'],[60,'수확 시작'],[80,'수확 마감·월동 피복']]},
+'상추':{p:'정식일',h:[25,70],m:[[7,'활착 확인'],[14,'웃거름 소량'],[25,'첫 수확(겉잎부터)'],[50,'추대·무름병 점검'],[70,'수확 마감']]},
+'가지':{p:'정식일',h:[35,150],m:[[10,'활착·지지대'],[20,'곁순 정리'],[30,'웃거름 시작(2~3주 간격)'],[35,'첫 수확'],[150,'수확 마감']]},
+'배추':{p:'정식일(김장)',h:[60,75],m:[[7,'활착 확인'],[14,'1차 웃거름'],[30,'2차 웃거름'],[45,'결구 시작, 진딧물·무름병 점검'],[60,'결구 확인 후 수확 시작'],[75,'수확 마감(서리 전후)']]},
+'무':{p:'파종일',h:[60,75],m:[[7,'1차 솎기'],[20,'2차 솎기'],[30,'웃거름·북주기'],[45,'비대기 물 관리, 진딧물 점검'],[60,'수확 시작'],[75,'서리 전 수확 마무리']]}};
+const setC=i=>{st.c=Object.keys(crops)[i];save();render()};
+const setCD=v=>{st.cd=st.cd||{};const c=st.c||'고추';if(v)st.cd[c]=v;else delete st.cd[c];save();render()};
+const clrCD=()=>setCD('');
+const cfm=d=>`${d.getMonth()+1}/${d.getDate()}`,clab=n=>n==0?'오늘':n>0?`D-${n}`:`${-n}일 지남`;
+function myCrops(){
+ const cd=st.cd||{},ks=Object.keys(cd).filter(k=>CD[k]);if(!ks.length)return '';
+ const t0=new Date(baseDate().toDateString());
+ return `<div class='card res'><div class='d'>🌿 내가 심은 작물</div>`+ks.map(k=>{const T=new Date(cd[k]+'T00:00'),s=Math.round((t0-T)/864e5),nx=CD[k].m.find(x=>add(T,x[0])>=t0);return `<p><b>${k}</b> ${s>=0?s+'일째':'D-'+(-s)} · ${nx?'다음: '+nx[1]+' ('+clab(Math.round((add(T,nx[0])-t0)/864e5))+')':'마무리 단계'}</p>`}).join('')+`</div>`;
+}
+function crop(){
+ const c=st.c||'고추',D=CD[c],t0=new Date(baseDate().toDateString());
+ const v=(st.cd||{})[c];
+ let h=`<div class='chips'>`+Object.keys(crops).map((k,i)=>`<button class='${k==c?'on':''}' onclick='setC(${i})'>${k}</button>`).join('')+`</div>`;
+ h+=`<div class='card'><label style='margin-top:0'>🌱 ${c} ${D.p} (선택사항)</label><input type='date' value='${v||''}' style='font-size:19px' onchange='setCD(this.value)'>${v?`<button class='back' onclick='clrCD()'>입력 지우기</button>`:`<div class='d'>날짜를 넣으면 경과일과 예상 수확일을 계산합니다. 안 넣어도 아래 일반 안내는 볼 수 있어요.</div>`}</div>`;
+ if(v){
+  const T=new Date(v+'T00:00'),s=Math.round((t0-T)/864e5),a=add(T,D.h[0]),b=add(T,D.h[1]),pct=Math.min(100,Math.max(0,Math.round(s/D.h[1]*100)));
+  const nx=D.m.find(x=>add(T,x[0])>=t0);
+  h+=`<div class='card' style='text-align:center'><div class='d'>${c} ${s>=0?D.p+' 후':D.p+'까지'}</div><div style='font-size:38px;font-weight:800;color:var(--pri)'>${s>=0?s+'일째':'D-'+(-s)}</div><div style='background:var(--pri2);border-radius:8px;height:14px;margin:10px 0;overflow:hidden'><div style='background:var(--pri);height:100%;width:${pct}%'></div></div><div class='d'>수확 마감까지 ${pct}%</div></div><div class='card' style='background:var(--pri2)'><div class='d'>예상 수확기간</div><div style='font-size:24px;font-weight:800'>${cfm(a)} ~ ${cfm(b)}</div><div class='t'>시작 ${clab(Math.round((a-t0)/864e5))}</div><div class='d'>품종·날씨·재배방식에 따라 달라집니다. 상태를 보고 판단하세요.</div></div><div class='card'><b>한눈에 보는 일정</b><div class='tl' style='margin-top:10px'>${D.m.map(x=>{const d=add(T,x[0]),n=Math.round((d-t0)/864e5);return `<div class='it ${x==nx?'now':(n<0?'past':'')}'><div class='d'>${cfm(d)}</div><div class='t'>${x[1]} <span class='tag'>${clab(n)}</span></div></div>`}).join('')}</div></div>`;
+ }
+ h+=`<div class='card'><b>일반 시기 안내</b><div class='tl' style='margin-top:10px'>`+crops[c].map(r=>`<div class='it'><div class='t'>${r[0]}</div><div class='d' style='font-size:16px'>${r[1]}</div></div>`).join('')+`</div></div><div class='card d'>증상은 사진을 찍어 마을 담당자나 농업기술센터에 문의하세요.</div>`;
+ $('#view').innerHTML=h;
+}
+function render(){nav();reg();({plant,now,cal,dx,flow,crop,tip,faq:faqv})[tab]()}
+render();
+</script>
+</body>
+</html>
