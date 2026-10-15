@@ -56,7 +56,6 @@ input,select{font-size:20px!important}.opt{font-size:20px!important}.d{font-size
 <div class="tsec">🚜 농약·자재</div>
 <a href="tel:0635812321"><small>계화농협</small><b>063-581-2321</b></a>
 <a href="tel:0635814347"><small>계화농자재센터</small><b>063-581-4347</b></a>
-<a href="tel:01026564347"><small>계화농자재(휴대)</small><b>010-2656-4347</b></a>
 <a href="tel:0635811604"><small>중앙농협자재</small><b>063-581-1604</b></a>
 <a href="tel:0635832347"><small>터미널농약사(부안읍)</small><b>063-583-2347</b></a>
 <div class="tsec">🏛 기관·신고</div>
@@ -75,7 +74,7 @@ window.__errs=[];window.addEventListener("error",function(e){try{window.__errs.p
 <script>
 const $=s=>document.querySelector(s);
 const tabs=[["plant","🌱","모내기"],["now","⏱","오늘할일"],["cal","📅","벼달력"],["tip","🧪","농약·비료"],["dx","🔍","병진단"],["wx","🌦","날씨"],["flow","🧭","상황대처"],["crop","🥬","밭작물"],["log","📝","내기록"],["faq","❓","자주질문"]];
-let tab="now",st={};
+let tab="wx",st={};
 try{st=JSON.parse(localStorage.getItem("nongsa")||"{}")}catch(e){}
 const save=()=>{try{localStorage.setItem("nongsa",JSON.stringify(st))}catch(e){}};
 const fmt=d=>`${d.getMonth()+1}/${d.getDate()}`;
@@ -228,7 +227,7 @@ cn:{n:'충남 당진·서산',off:3,c:[36.89,126.62],p:'서해안 간척지가 �
 gg:{n:'경기 이천·여주',off:0,c:[37.27,127.44],p:'중부 평야입니다. 잎·이삭도열병, 줄무늬잎마름병(애멸구), 노린재를 주의하세요.',nu:'평균적인 시기가 기준입니다. 이삭거름은 출수 25일 전입니다.'},
 gw:{n:'강원 철원',off:-5,c:[38.14,127.31],p:'저온 지역입니다. 냉해, 저온 출수 장해, 도열병을 주의하세요.',nu:'질소 과다를 피하고 저온 때는 물을 깊게 대세요.'},
 gb:{n:'경북 안동·상주',off:2,c:[36.56,128.72],p:'일교차가 큰 분지입니다. 이삭도열병, 노린재, 고온 장해를 주의하세요.',nu:'규산·칼리로 줄기를 튼튼하게 하세요.'},
-gn:{n:'경남 밀양·김해',off:5,c:[35.49,128.74],p:'남부 고온다습 지역입니다. 멸구류, 도열병, 태풍 피해를 주의하세요.',nu:'태풍 후 즉시 병해 점검, 규산·칼리를 보충하세요.'}};
+gn:{n:'경남 밀양·김해',off:5,c:[35.49,128.74],p:'남부 고온다습 지역입니다. 멸구류, 도열병, 태풍 피해를 주의하세요.',nu:'태풍 후 즉시 병해 점검, 규산·칼리를 보충하세요.'},boeun:{n:'충북 보은',off:-3,c:[36.48,127.72],p:'충북 내륙 산간지입니다. 일교차가 크고 저온·냉해, 도열병을 주의하세요. 멸구 비래는 평야보다 적지만 예찰은 하세요.',nu:'질소 과다를 피하고 규산·칼리로 줄기를 튼튼하게 하세요.'}};
 const rg=()=>R[st.r]?st.r:'buan';
 function reg(){$('#reg').innerHTML=`<label style='margin:0 0 4px'>📍 지역</label><select onchange='st.r=this.value;save();render()'>`+Object.keys(R).map(k=>`<option value='${k}' ${k==rg()?'selected':''}>${R[k].n}${k=='buan'?' (기본)':''}</option>`).join('')+`</select>`}
 function regCard(){const r=R[rg()];return `<div class='card res'><div class='d'>📍 ${r.n} 지역 참고</div><p><b>⚠ 지역 병해충 경향</b><br>${r.p}</p><p><b>🧪 영양·시비 참고</b><br>${r.nu}</p><div class='d'>지역 날짜는 평년 추정치입니다. 품종·이앙일에 따라 1~2주 차이가 납니다.</div></div>`}
@@ -303,7 +302,7 @@ delete st.b;delete st.w;
 const fmtI=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const baseDate=()=>st.b?new Date(st.b+'T12:00'):new Date();
 const defT=()=>fmtI(new Date(2026,5,5-(7-R[rg()].off)));
-const dt=k=>{const t=st.t||defT();return k=='t'?t:(st.h||fmtI(add(new Date(t+'T00:00'),(+st.v||82))))};
+const dt=k=>{const t=st.t||defT();return k=='t'?t:(st.h||fmtI(add(new Date(t+'T00:00'),(VDAY[st.v]||(+st.v)||82))))};
 const TI={w:'💧',s:'🛡',n:'🧪',a:'🌱'};
 const PL=[
 ['t',-7,'a','종자소독·침종','소독액 처리 후 충분히 헹굼. 키다리병·도열병 예방의 첫 단추'],
@@ -367,7 +366,7 @@ cn:{rain:"간척지 배수·침수 뒤 흰잎마름병을 점검하세요.",typ:
 gg:{rain:"비 전후 도열병·문고병을 점검하세요.",typ:"태풍 뒤 도복·침수를 확인하세요.",heat:"35℃가 넘으면 불임 주의, 물을 깊게 대세요.",cold:"냉해 주의 지역, 저온엔 깊게 대세요.",dry:"등숙기엔 간단관개를 유지하세요."},
 gw:{rain:"저온다습엔 도열병을 주의하세요.",typ:"바람 피해와 침수를 확인하세요.",heat:"고온은 드물지만 물은 걸러대세요.",cold:"냉해 상습지, 15~20cm 깊게 대 보온하세요.",dry:"가뭄에도 물이 마르지 않게 하세요."},
 gb:{rain:"분지 집중호우엔 배수로를 정비하세요.",typ:"태풍 뒤 도복을 확인하세요.",heat:"고온 장해와 노린재 증가를 주의하세요.",cold:"일교차가 크니 저온엔 보온하세요.",dry:"가뭄엔 물 관리를 챙기세요."},
-gn:{rain:"고온다습 지역, 비 뒤 멸구·도열병을 점검하세요.",typ:"태풍 뒤엔 즉시 병해를 점검하세요.",heat:"고온기엔 물을 깊게 대세요.",cold:"저온엔 보온 물대기를 하세요.",dry:"가뭄엔 관수를 유지하세요."}};
+gn:{rain:"고온다습 지역, 비 뒤 멸구·도열병을 점검하세요.",typ:"태풍 뒤엔 즉시 병해를 점검하세요.",heat:"고온기엔 물을 깊게 대세요.",cold:"저온엔 보온 물대기를 하세요.",dry:"가뭄엔 관수를 유지하세요."},boeun:{rain:"산간 집중호우엔 배수로를 정비하고 도열병을 점검하세요.",typ:"태풍 뒤 도복·침수를 확인하세요.",heat:"고온기엔 물을 걸러대세요.",cold:"냉해 상습지, 저온엔 깊게 대 보온하세요.",dry:"가뭄에도 물이 마르지 않게 하세요."}};
 function wxFit(){try{Object.keys(SG0).forEach(k=>{SG[k].w=SG0[k].w.slice();SG[k].s=SG0[k].s.slice();SG[k].nu=SG0[k].nu.slice()});Object.keys(R0).forEach(k=>{R[k].p=R0[k].p;R[k].nu=R0[k].nu});if(!st.w)return;if(WXA[st.w]){const S=SG[curStage()];if(S){const g=WXA[st.w];S.w=g.w.concat(S.w);S.s=g.s.concat(S.s);S.nu=g.nu.concat(S.nu)}}const wn=WXR[rg()]&&WXR[rg()][st.w];if(wn)R[rg()].p=R[rg()].p+" "+wn}catch(_){}}
 const setW=i=>{st.w=i<0?'':WK[i];wxFit();render()};
 // 날씨 자동예보: Open-Meteo (키 없음, 무료). 지역별 위경도로 3일 예보 + 농작업 제안
@@ -438,7 +437,7 @@ function reg(){
  $('#reg').innerHTML=`<div class='row'><div><label style='margin:0 0 4px'>📍 지역</label><select onchange='st.r=this.value;save();render()'>`+Object.keys(R).map(k=>`<option value='${k}' ${k==rg()?'selected':''}>${R[k].n}${k=='buan'?' (기본)':''}</option>`).join('')+`</select></div><div><label style='margin:0 0 4px'>📆 기준일${st.b?'(선택)':'(오늘)'}</label><input type='date' value='${fmtI(b)}' onchange='st.b=this.value;render()'></div></div>${st.b?`<button class='back' onclick='st.b=null;render()'>오늘 날짜로 되돌리기</button>`:''}`;
 }
 if(!st.t&&tab=='now')tab='plant';
-const VR=[['조생종(약 70일)',70],['중생종(약 78일)',78],['중만생종(약 82일, 기본)',82],['만생종(약 88일)',88]];
+const VR=[['신동진(중만생·82일·기본)','sindongjin',82],['일미(중만생·82일)','ilmi',82],['동진찰·찹쌀(중만생·82일)','chal',82],['조생종(약 70일)','jo',70],['중생종(약 78일)','jung',78],['중만생종(약 82일)','jungman',82],['만생종(약 88일)','man',88]];const VDAY={};VR.forEach(v=>VDAY[v[1]]=v[2]);
 function plant(){
  const t0=new Date(baseDate().toDateString()),T=new Date(dt('t')+'T00:00'),H=new Date(dt('h')+'T00:00');
  const dd=d=>Math.round((d-t0)/864e5),lab=n=>n==0?'오늘':n>0?`D-${n}`:`${-n}일 지남`;
@@ -578,8 +577,9 @@ document.addEventListener("click",function(e){
  it.insertAdjacentHTML("beforeend","<div class='txd' style='margin-top:6px;background:var(--pri2);border-radius:8px;padding:10px 12px;font-size:15px'>"+TASKD[k].map(x=>"<div style='margin:3px 0'>"+x+"</div>").join("")+"</div>");
  }catch(_){}
 });
+function vrFix(){if(tab!=='plant')return;const s=document.querySelector("#view select");if(!s||s.dataset.vr)return;s.dataset.vr="1";const m={'70':'jo','78':'jung','82':'sindongjin','88':'man'};let cur=st.v||'sindongjin';if(m[cur])cur=m[cur];st.v=cur;save();s.innerHTML=VR.map(function(v){return "<option value='"+v[1]+"'"+(cur===v[1]?" selected":"")+">"+v[0]+"</option>"}).join("")}
 function wxTab(){$('#view').innerHTML="<div class='card'><b>🌦 날씨 예보</b><div class='d'>키 없이 무료로 가져옵니다(Open-Meteo). 지역을 바꾸면 그 지역 예보로 바뀝니다.</div></div>"+wxBox()+"<div class='card d'>비·태풍 예보가 있으면 방제·수확 일정을 앞당기세요. 약·비료는 비 직전·직후를 피하세요.</div>"}
-function render(){try{nav();reg();({plant,now,cal,dx,flow,crop,tip,log:logv,faq:faqv,wx:wxTab})[tab]()}catch(err){try{document.getElementById("view").innerHTML="<div class='card'><b>⚠ 오류</b><p>"+err.message+"</p></div>"}catch(_){}}setTimeout(()=>{try{wxLoad()}catch(e){}try{flowQ()}catch(e){}try{txMark()}catch(e){}},0)}
+function render(){try{nav();reg();({plant,now,cal,dx,flow,crop,tip,log:logv,faq:faqv,wx:wxTab})[tab]()}catch(err){try{document.getElementById("view").innerHTML="<div class='card'><b>⚠ 오류</b><p>"+err.message+"</p></div>"}catch(_){}}setTimeout(()=>{try{wxLoad()}catch(e){}try{flowQ()}catch(e){}try{txMark()}catch(e){}try{vrFix()}catch(e){}},0)}
 render();
 window.__bootOK=true;
 </script>
