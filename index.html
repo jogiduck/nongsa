@@ -48,7 +48,7 @@ input,select{font-size:20px!important}.opt{font-size:20px!important}.d{font-size
 <body>
 <main>
 <noscript><div class="card"><b>⚠ 자바스크립트가 꺼져 있습니다.</b><p>브라우저 설정에서 자바스크립트를 켜주세요.</p></div></noscript>
-<div style="display:flex;align-items:center;gap:8px"><h1 style="margin:6px 0;flex:1">🌾 벼농사 도우미 <span style="font-size:12px;color:var(--sub)">v20</span></h1><a href="https://m.naver.com" target="_blank" title="네이버 열기" style="display:inline-block;min-width:46px;height:46px;line-height:46px;text-align:center;background:#03C75A;color:#fff;font-weight:800;font-size:24px;border-radius:10px;text-decoration:none">N</a></div>
+<div style="display:flex;align-items:center;gap:8px"><h1 style="margin:6px 0;flex:1">🌾 벼농사 도우미 <span style="font-size:12px;color:var(--sub)">v21</span></h1><a href="https://m.naver.com" target="_blank" title="네이버 열기" style="display:inline-block;min-width:46px;height:46px;line-height:46px;text-align:center;background:#03C75A;color:#fff;font-weight:800;font-size:24px;border-radius:10px;text-decoration:none">N</a></div>
 <nav id="nav"></nav>
 <div class="card" id="reg" style="margin:6px 0"></div><div id="view"></div>
 <div class="card" id="tel"><b>☎ 부안 농업 연락처</b><div class="d">누르면 전화걸기</div>
@@ -358,7 +358,17 @@ typ:{w:["🌀 태풍: 논물 10cm 깊게, 침수되면 물 먼저 빼기"],s:["�
 heat:{w:["🔥 폭염: 낮 물 깊게, 아침·저녁 새물로 지온 낮추기"],s:["🔥 농약은 서늘한 아침·저녁에만 살포"],nu:["🔥 질소 과다 금지"]},
 cold:{w:["🥶 저온: 7~10cm 깊게 대 보온"],s:["🥶 저온기 방제보다 보온 우선"],nu:["🥶 웃거름 자제"]},
 dry:{w:["🏜 가뭄: 마르지 않게 물대기 주기 단축"],s:["🏜 이슬 마른 뒤 살포(약효)"],nu:["🏜 웃거름은 물과 함께"]}};
-function wxFit(){try{Object.keys(SG0).forEach(k=>{SG[k].w=SG0[k].w.slice();SG[k].s=SG0[k].s.slice();SG[k].nu=SG0[k].nu.slice()});if(!st.w||!WXA[st.w])return;const S=SG[curStage()];if(!S)return;const g=WXA[st.w];S.w=g.w.concat(S.w);S.s=g.s.concat(S.s);S.nu=g.nu.concat(S.nu)}catch(_){}}
+const R0=JSON.parse(JSON.stringify(R));
+const WXR={
+buan:{rain:"장마철엔 간척지 배수를 우선하고 침수 뒤 흰잎마름병을 점검하세요.",typ:"태풍·염풍 뒤엔 맑은 물로 갈아대고 흰잎마름병 방제를 판단하세요.",heat:"고온기엔 낮 물을 깊게 대고 간척지 염 상승을 주의하세요.",cold:"저온기엔 7~10cm 깊게 대 보온하세요.",dry:"가뭄엔 염농도가 오르기 쉬우니 새물로 갈아대세요."},
+jbp:{rain:"평야지 배수 정비, 출수기 비가 오면 이삭도열병을 주의하세요.",typ:"태풍 뒤 도복·침수를 확인하세요.",heat:"고온 등숙기엔 물을 마르지 않게 하세요.",cold:"저온 출수장해가 걱정되면 물을 깊게 대세요.",dry:"가뭄엔 수잉~출수기 물대기를 우선하세요."},
+jn:{rain:"고온다습 지역이라 비 뒤 도열병 번짐을 주의하세요.",typ:"태풍 뒤 멸구·도열병을 점검하세요.",heat:"출수기 고온 불임이 걱정되면 낮 물을 깊게 대세요.",cold:"저온이 오면 보온 물대기를 하세요.",dry:"가뭄엔 관수를 유지하고 질소 과다는 금하세요."},
+cn:{rain:"간척지 배수·침수 뒤 흰잎마름병을 점검하세요.",typ:"염풍 뒤엔 맑은 물로 갈아대세요.",heat:"고온기엔 물을 깊게 대세요.",cold:"저온엔 깊게 대 보온하세요.",dry:"가뭄엔 염 상승 주의, 새물로 대기 하세요."},
+gg:{rain:"비 전후 도열병·문고병을 점검하세요.",typ:"태풍 뒤 도복·침수를 확인하세요.",heat:"35℃가 넘으면 불임 주의, 물을 깊게 대세요.",cold:"냉해 주의 지역, 저온엔 깊게 대세요.",dry:"등숙기엔 간단관개를 유지하세요."},
+gw:{rain:"저온다습엔 도열병을 주의하세요.",typ:"바람 피해와 침수를 확인하세요.",heat:"고온은 드물지만 물은 걸러대세요.",cold:"냉해 상습지, 15~20cm 깊게 대 보온하세요.",dry:"가뭄에도 물이 마르지 않게 하세요."},
+gb:{rain:"분지 집중호우엔 배수로를 정비하세요.",typ:"태풍 뒤 도복을 확인하세요.",heat:"고온 장해와 노린재 증가를 주의하세요.",cold:"일교차가 크니 저온엔 보온하세요.",dry:"가뭄엔 물 관리를 챙기세요."},
+gn:{rain:"고온다습 지역, 비 뒤 멸구·도열병을 점검하세요.",typ:"태풍 뒤엔 즉시 병해를 점검하세요.",heat:"고온기엔 물을 깊게 대세요.",cold:"저온엔 보온 물대기를 하세요.",dry:"가뭄엔 관수를 유지하세요."}};
+function wxFit(){try{Object.keys(SG0).forEach(k=>{SG[k].w=SG0[k].w.slice();SG[k].s=SG0[k].s.slice();SG[k].nu=SG0[k].nu.slice()});Object.keys(R0).forEach(k=>{R[k].p=R0[k].p;R[k].nu=R0[k].nu});if(!st.w)return;if(WXA[st.w]){const S=SG[curStage()];if(S){const g=WXA[st.w];S.w=g.w.concat(S.w);S.s=g.s.concat(S.s);S.nu=g.nu.concat(S.nu)}}const wn=WXR[rg()]&&WXR[rg()][st.w];if(wn)R[rg()].p=R[rg()].p+" "+wn}catch(_){}}
 const setW=i=>{st.w=i<0?'':WK[i];wxFit();render()};
 // 날씨 자동예보: Open-Meteo (키 없음, 무료). 지역별 위경도로 3일 예보 + 농작업 제안
 let wxCache={};
@@ -544,7 +554,7 @@ const TASKD={
 "물떼기":["💧 물떼기(낙수)","때: 수확 15~20일 전부터 서서히.","주의: 너무 일찍 빼면 쭉정이·미질 저하.","뒤: 논바닥을 굳혀 수확기 진입."],
 "수확 시작":["🚜 수확 시작","기준: 낟알 85~90% 황변, 수분 20~25%.","뒤: 건조는 수분 15% 안팎까지.","주의: 비 예보 있으면 맑은 날 오후에."],
 "수확 마감":["🚜 수확 마감","늦으면 도복·쌀 깨짐↑. 서두르세요.","뒤: 규산·퇴비·가을갈이로 내년 준비."]};
-function txMark(){if(tab!=="plant"&&tab!=="cal")return;const ks=["중간물떼기","물떼기","이삭거름","출수","수확 마감","수확 시작","모내기"];document.querySelectorAll("#view .tl .it").forEach(function(it){if(it.querySelector(".txm"))return;const t=it.querySelector(".t");if(!t)return;const tx=t.textContent||"";const hit=ks.some(function(k){return tx.indexOf(k)>=0});if(!hit)return;t.insertAdjacentHTML("beforeend"," <span class='txm' style='color:var(--pri)'>＋ 자세히</span>")})}
+function txMark(){if(tab!=="plant"&&tab!=="cal")return;const ks=["중간물떼기","물떼기","이삭거름","출수","수확 마감","수확 시작","모내기"];document.querySelectorAll("#view .tl .it").forEach(function(it){if(it.querySelector(".txm"))return;const t=it.querySelector(".t");if(!t)return;const tx=t.textContent||"";const hit=ks.some(function(k){return tx.indexOf(k)>=0});if(!hit)return;t.insertAdjacentHTML("beforeend"," <span class='txm' style='color:var(--pri)'>＋ 자세히</span>")});document.querySelectorAll("#view p").forEach(function(p){const b=p.querySelector("b");if(b&&b.textContent==="오늘 날씨는?"&&!p.querySelector(".wxh"))b.insertAdjacentHTML("afterend"," <span class='wxh' style='font-size:13px;color:var(--sub)'>👆 누르면 아래가 바뀌어요</span>")});document.querySelectorAll("#view div.d").forEach(function(d){if(d.textContent.indexOf("지역 참고")>=0&&!d.querySelector(".wxh"))d.insertAdjacentHTML("beforeend"," <span class='wxh' style='font-size:13px'>👆 날씨를 누르면 한 줄이 붙어요</span>")})}
 document.addEventListener("click",function(e){
  try{
  if(tab!=="plant"&&tab!=="cal")return;
