@@ -43,12 +43,47 @@ input,select{width:100%;padding:12px;font-size:17px;border:1px solid var(--bd);b
 .chips button{padding:10px 14px;border-radius:20px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font-size:16px}
 .chips button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
 ul{padding-left:20px;margin:4px 0}ol{padding-left:22px}.fb{background:var(--pri2);border:1px solid var(--pri);border-radius:10px;padding:10px 12px;font-weight:700;text-align:center}.fb.ok{background:var(--pri);color:#fff}.fa{text-align:center;color:var(--pri);font-weight:700;padding:6px 0}textarea{font-family:inherit}
-input,select{font-size:20px!important}.opt{font-size:20px!important}.d{font-size:16px!important}</style>
+input,select{font-size:20px!important}.opt{font-size:20px!important}.d{font-size:16px!important}
+html[data-fs="big"] body{font-size:21px}
+html[data-fs="big"] .d{font-size:18px!important}
+html[data-fs="big"] .t{font-size:20px}
+html[data-fs="big"] label{font-size:17px}
+html[data-fs="big"] h1{font-size:24px}
+html[data-fs="big"] .res h3{font-size:20px}
+html[data-fs="big"] .res p{font-size:18px}
+html[data-fs="big"] .opt{font-size:22px!important}
+html[data-fs="big"] input,html[data-fs="big"] select{font-size:22px!important}
+html[data-fs="big"] nav{grid-template-columns:repeat(4,1fr)}
+html[data-fs="big"] nav button{font-size:14px}
+html[data-fs="big"] nav button .em{font-size:22px}
+html[data-fs="big"] .tels{grid-template-columns:repeat(2,1fr)}
+html[data-fs="big"] .tels b{font-size:17px}
+html[data-fs="big"] .tels small{font-size:13px}
+html[data-fs="xl"] body{font-size:24px}
+html[data-fs="xl"] .d{font-size:20px!important}
+html[data-fs="xl"] .t{font-size:22px}
+html[data-fs="xl"] label{font-size:19px}
+html[data-fs="xl"] h1{font-size:26px}
+html[data-fs="xl"] .res h3{font-size:22px}
+html[data-fs="xl"] .res p{font-size:20px}
+html[data-fs="xl"] .opt{font-size:24px!important}
+html[data-fs="xl"] input,html[data-fs="xl"] select{font-size:24px!important}
+html[data-fs="xl"] nav{grid-template-columns:repeat(4,1fr)}
+html[data-fs="xl"] nav button{font-size:15px}
+html[data-fs="xl"] nav button .em{font-size:24px}
+html[data-fs="xl"] .tels{grid-template-columns:repeat(2,1fr)}
+html[data-fs="xl"] .tels b{font-size:19px}
+html[data-fs="xl"] .tels small{font-size:14px}
+.actin{width:auto!important;max-width:150px;font-size:15px!important;padding:6px 8px!important;border-radius:8px}
+html[data-fs="big"] .actin{font-size:16px!important}
+html[data-fs="xl"] .actin{font-size:17px!important}
+.txm{cursor:pointer}
+</style>
 </head>
 <body>
 <main>
 <noscript><div class="card"><b>⚠ 자바스크립트가 꺼져 있습니다.</b><p>브라우저 설정에서 자바스크립트를 켜주세요.</p></div></noscript>
-<div style="display:flex;align-items:center;gap:8px"><h1 style="margin:6px 0;flex:1">🌾 벼농사 도우미 <span style="font-size:12px;color:var(--sub)">v21</span></h1><a href="https://m.naver.com" target="_blank" title="네이버 열기" style="display:inline-block;min-width:46px;height:46px;line-height:46px;text-align:center;background:#03C75A;color:#fff;font-weight:800;font-size:24px;border-radius:10px;text-decoration:none">N</a></div>
+<div style="display:flex;align-items:center;gap:8px"><h1 style="margin:6px 0;flex:1">🌾 벼농사 도우미 <span style="font-size:12px;color:var(--sub)">v25</span></h1><button id="fs-b" onclick="fsGo()" title="글자 크기: 보통" style="min-width:46px;height:46px;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:10px;font-weight:800;font-size:20px;font-family:inherit;cursor:pointer">가</button><a href="https://m.naver.com" target="_blank" title="네이버 열기" style="display:inline-block;min-width:46px;height:46px;line-height:46px;text-align:center;background:#03C75A;color:#fff;font-weight:800;font-size:24px;border-radius:10px;text-decoration:none">N</a></div>
 <nav id="nav"></nav>
 <div class="card" id="reg" style="margin:6px 0"></div><div id="view"></div>
 <div class="card" id="tel"><b>☎ 부안 농업 연락처</b><div class="d">누르면 전화걸기</div>
@@ -247,8 +282,10 @@ function tip(){
  const D=[['🛡 방제약 고르는 기본 원칙',['예방과 치료를 구분하세요. 도열병·세균성벼알마름병은 번지기 전(출수 직전) 예방이 효과적이고, 멸구는 발생 초기에 밑동까지 닿게 뿌려야 합니다.','같은 계통 약제를 계속 쓰면 저항성이 생기니 계통을 바꿔 돌려 쓰세요.','라벨에서 작물·병해충 등록, 희석배수, 사용 횟수, 수확 전 사용일을 반드시 확인하세요.','바람 약한 아침·저녁에 뿌리고, 비 직전·직후는 피하세요. 벌·양잠 독성과 이웃 논 피해도 확인하세요.']],
 ['🎯 병해충별 방제 방향(벼)',['이삭도열병: 출수 직전~출수기에 예방. 비·저온다습 예보면 앞당깁니다.','잎도열병: 발견 초기에 방제하고 질소를 줄입니다.','흰잎마름병: 태풍·침수 직후 바로 방제합니다. 번진 뒤엔 효과가 떨어집니다.','세균성벼알마름병: 출수기 예방이 핵심이며, 발병 후엔 한계가 있습니다.','벼멸구·흰등멸구: 비래 확인 후 밑동에 닿게(물량 충분히, 논물 상태는 라벨 확인) 방제합니다.','노린재: 출수 후 방제하고 논둑 잡초를 정리합니다.','벼물바구미: 이앙 직후 입제 처리 또는 육묘상 처리로 막습니다.']],
 ['🧪 영양(비료) 종류와 시기',['질소(N): 잎과 분얼을 키웁니다. 밑거름 → 분얼비(이앙 7~10일 후) → 이삭거름(출수 25일 전). 과다하면 도열병·도복이 늘어납니다.','인산(P): 활착과 뿌리, 초기 분얼에 중요합니다. 밑거름으로 써레질 전에 줍니다.','칼리(K): 줄기를 튼튼하게 하고 병 저항성을 높입니다. 밑거름과 이삭거름 때 나눠 줍니다.','규산(Si): 벼의 대표 양분입니다. 도열병·도복을 줄이며 수확 후~써레질 전에 시용합니다.','칼슘·마그네슘(석회·고토): 산성 토양 개선, 고추 배꼽썩음 예방에 씁니다. 토양검정 후 시용하세요.','퇴비·유기물: 지력을 높이고 가을에 시용합니다. 간척지는 염 완화에도 도움됩니다.','엽면시비: 보조 수단입니다. 토양 시비를 대신하지 않습니다.']]];
- $('#view').innerHTML=D.map(x=>`<div class='card res'><h3>${x[0]}</h3><ul>${x[1].map(y=>`<li style='margin:6px 0'>${y}</li>`).join('')}</ul></div>`).join('')+`<div class='card d'>구체적인 제품·시비량은 토양검정 결과와 품종에 따라 달라집니다. 지역·논 상태를 농업기술센터에 문의하세요.</div>`;
+ $('#view').innerHTML=D.map(x=>`<div class='card res'><h3>${x[0]}</h3><ul>${x[1].map(y=>`<li style='margin:6px 0'>${y}</li>`).join('')}</ul></div>`).join('')+scCard()+`<div class='card d'>구체적인 제품·시비량은 토양검정 결과와 품종에 따라 달라집니다. 지역·논 상태를 농업기술센터에 문의하세요.</div>`;
 }
+function scCard(){return "<div class='card res'><h3>🧮 약제 안전사용 계산기</h3><div class='d'>라벨의 '수확 전 사용 제한일'을 넣으면, 수확 예정일에 안전한지 계산해 드립니다.</div><div class='row' style='margin-top:8px'><div><label>살포한 날(또는 살포할 날)</label><input type='date' id='sc-d' value='"+fmtI(baseDate())+"'></div><div><label>수확 전 제한일(라벨)</label><input id='sc-l' inputmode='numeric' placeholder='예: 30'></div></div><label>수확 예정일</label><input type='date' id='sc-h' value='"+fmtI(add(new Date(dt('h')+'T00:00'),40))+"'><div style='margin-top:8px'><button class='opt' style='text-align:center' onclick='scCalc()'>계산하기</button></div><div id='sc-o' style='margin-top:8px'></div></div>"}
+function scCalc(){try{const o=document.getElementById('sc-o'),sp=document.getElementById('sc-d').value,lim=parseFloat(document.getElementById('sc-l').value),hv=document.getElementById('sc-h').value;if(!sp||!(lim>=0)){o.innerHTML="<div class='d'>살포 날짜와 라벨의 제한일을 모두 넣어주세요.</div>";return}const H=hv?new Date(hv+'T00:00'):add(new Date(dt('h')+'T00:00'),40),A=add(new Date(sp+'T00:00'),lim),n=Math.round((A-H)/864e5),f=d=>d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate(),today=new Date(baseDate().toDateString());o.innerHTML="<div><b>이 약을 쓰면 수확 가능: "+f(A)+"</b></div><div class='d'>수확 예정일: "+f(H)+"</div>"+(n<=0?"<div class='warn' style='background:var(--pri2);color:var(--pri)'>✅ 수확 예정일이 제한일보다 "+(-n)+"일 뒤라 안전합니다.</div>":"<div class='warn'>⚠ "+n+"일 부족합니다. 수확을 늦추거나 제한일이 짧은 약으로 바꾸세요.</div>")+(H<today?"<div class='d'>※ 수확 예정일이 이미 지났습니다. 실제 수확 예정일로 다시 계산하세요.</div>":"")+"<div class='d'>라벨·농사로·농약안전정보시스템의 실제 등록 내용을 우선 확인하세요.</div>"}catch(e){alert('계산하지 못했어요. 날짜를 확인하세요.')}}
 Object.assign(crops,{
 '상추':[['3~4월·9월','서늘할 때 잘 자랍니다. 파종하거나 모종을 심으세요.'],['정식 후','활착되면 물은 아침에 적게 자주, 웃거름은 2~3주 후 소량.'],['5~6월','고온·장마엔 꽃대(추대)와 무름병 주의. 차광하고 배수로를 정비하세요.'],['수확','겉잎부터 따서 오래 수확하고, 아침에 수확하세요.']],
 '가지':[['4~5월','밤 기온 15℃ 이상 된 뒤 모종을 정식합니다.'],['6~7월','곁순 정리와 지지대, 칼륨·칼슘 웃거름을 2~3주 간격으로.'],['7~8월','응애·진딧물·시들음병 점검, 마르지 않게 관수.'],['8~10월','열매에 광택이 있을 때 수확, 늦서리 전 마무리.']],
@@ -301,8 +338,16 @@ function flow(){
 delete st.b;delete st.w;
 const fmtI=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const baseDate=()=>st.b?new Date(st.b+'T12:00'):new Date();
-const defT=()=>fmtI(new Date(2026,5,5-(7-R[rg()].off)));
-const dt=k=>{const t=st.t||defT();return k=='t'?t:(st.h||fmtI(add(new Date(t+'T00:00'),(VDAY[st.v]||(+st.v)||82))))};
+const badD=v=>!!(v&&!isNaN(new Date(v+'T00:00'))&&new Date(v+'T00:00').getFullYear()<baseDate().getFullYear());
+const staleT=()=>badD(st.t),staleH=()=>badD(st.h);
+const hasT=()=>!!(st.t&&!staleT()),hasH=()=>!!(st.h&&!staleH());
+const defT=()=>fmtI(new Date(baseDate().getFullYear(),5,5-(7-R[rg()].off)));
+const dt=k=>{const t=(staleT()?'':st.t)||defT();return k=='t'?t:((staleH()?'':st.h)||fmtI(add(new Date(t+'T00:00'),(VDAY[st.v]||(+st.v)||82))))};
+const AKEY=k=>k==='t'?st.t:k==='h'?st.h:k==='hv'?st.hv:k==='hw'?st.hw:((st.a||{})[k]);
+const actGet=k=>{const v=AKEY(k);if(!v||badD(v))return null;const d=new Date(v+'T00:00');return isNaN(d.getTime())?null:d};
+function actSet(k,v){if(!st.a)st.a={};if(k==='t'){st.t=v||''}else if(k==='h'){st.h=v||''}else if(k==='hv'){st.hv=v||''}else if(k==='hw'){st.hw=v||''}else{st.a[k]=v||''}save();render()}
+const hvS=()=>{const v=st.hv;if(!v||badD(v))return null;const d=new Date(v+'T00:00');return isNaN(d.getTime())?null:d};
+const hvE=()=>{const v=st.hw;if(!v||badD(v))return null;const d=new Date(v+'T00:00');return isNaN(d.getTime())?null:d};
 const TI={w:'💧',s:'🛡',n:'🧪',a:'🌱'};
 const PL=[
 ['t',-7,'a','종자소독·침종','소독액 처리 후 충분히 헹굼. 키다리병·도열병 예방의 첫 단추'],
@@ -395,7 +440,6 @@ async function wxLoad(){
   }
   const j=wxCache[key].j,d=j.daily,cur=j.current;
  const WMO0=c=>c==0?"☀️":c==1?"🌤️":c==2?"⛅":c==3?"☁️":(c==45||c==48)?"🌫️":(c==51||c==53||c==55)?"🌦️":(c==71||c==73||c==75||c==77||c==85||c==86)?"❄️":(c==95||c==96||c==99)?"⛈️":"🌧️";
- try{cur.temperature_2m=WMO0(cur.weather_code)+" "+cur.temperature_2m;}catch(_){}
  try{setTimeout(wxFix,0);}catch(_){}
   const stg=curStage(),grp=GR[stg];
   let sug=[];
@@ -410,11 +454,11 @@ async function wxLoad(){
   if((p47>=20||pr47>=70)&&!document.getElementById('wxlate')){const a2=document.getElementById('wxauto');if(a2)a2.insertAdjacentHTML('afterend',"<div class='card res' id='wxlate'><div class='warn'>📅 4~7일 뒤 비 예보 ("+p47+"mm) — 수확·말리기·방제는 앞당기고, 비 직전·직후 약·비료는 피하세요.<br>"+W.rain.g[grp]+"</div></div>");}
  }catch(_){}
   const rows=d.time.map((t,i)=>`<div>${t.slice(5)} · ${d.temperature_2m_min[i]}~${d.temperature_2m_max[i]}℃ · 강수 ${d.precipitation_sum[i]}mm(${d.precipitation_probability_max?d.precipitation_probability_max[i]+'%':''}) · 바람 ${d.wind_speed_10m_max[i]}m/s</div>`).join('');
-  el.innerHTML=`<div class='d'>📡 ${r.n} 자동예보 (키 없음·무료)</div><div class='t' style='font-size:19px'>지금 ${cur.temperature_2m}℃ · 바람 ${cur.wind_speed_10m}m/s</div><div class='d'>${rows}</div>`+(main?`<div class='warn'>⚠ 앞으로 3일: <b>${W[main].t}</b> 경향<br>${W[main].g[grp]}<div style='margin-top:6px'><button class='back' onclick='wxApply("${main}")'>→ 아래 날씨버튼에 반영</button></div></div>`:`<div class='d'>특보급 경향 없음. 평년 관리 유지.</div>`)+`<div class='d'>출처: Open-Meteo. 30분 캐시. 방제·시비 판단은 라벨+예보를 함께 보세요.</div>`;
+  el.innerHTML=`<div class='d'>📡 ${r.n} 자동예보 (키 없음·무료)</div><div class='t' style='font-size:19px'>지금 ${WMO0(cur.weather_code)} ${cur.temperature_2m}℃ · 바람 ${cur.wind_speed_10m}m/s</div><div class='d'>${rows}</div>`+(main?`<div class='warn'>⚠ 앞으로 3일: <b>${W[main].t}</b> 경향<br>${W[main].g[grp]}<div style='margin-top:6px'><button class='back' onclick='wxApply("${main}")'>→ 아래 날씨버튼에 반영</button></div></div>`:`<div class='d'>특보급 경향 없음. 평년 관리 유지.</div>`)+`<div class='d'>출처: Open-Meteo. 30분 캐시. 방제·시비 판단은 라벨+예보를 함께 보세요.</div>`;
  }catch(e){el.innerHTML=`<div class='d'>📡 자동예보</div><div class='d'>예보를 불러오지 못했어요(오프라인 가능). 아래 날씨버튼을 직접 눌러주세요.</div>`}
 }
 function wxApply(k){st.w=k;save();wxFit();render()}
-function curStage(){const t0=new Date(baseDate().toDateString()),dd=k=>Math.round((t0-new Date(dt(k)+'T00:00'))/864e5),tD=dd('t'),hD=dd('h');
+function curStage(){const t0=new Date(baseDate().toDateString());{const e=hvE();if(e&&e<=t0)return 'done';}const dd=k=>Math.round((t0-new Date(dt(k)+'T00:00'))/864e5),tD=dd('t'),hD=dd('h');
  return hD>=48?'done':hD>=40?'harv':hD>=28?'late':hD>=10?'fill':hD>=-3?'head':hD>=-15?'boot':hD>=-30?'pani':tD>=45?'tl2':tD>=35?'mid':tD>=7?'till':tD>=0?'est':'pre'}
 function stageCard(){
  const k=curStage(),S=SG[k],t0=new Date(baseDate().toDateString()),dd=x=>Math.round((t0-new Date(dt(x)+'T00:00'))/864e5),tD=dd('t'),hD=dd('h');
@@ -423,14 +467,29 @@ function stageCard(){
  const up=PL.map(p=>({d:add(new Date(dt(p[0])+'T00:00'),p[1]),p})).filter(o=>o.d>=t0&&o.d<=add(t0,14)).sort((a,b)=>a.d-b.d).slice(0,5);
  return `<div class='card res'><div class='d'>지금 벼 단계 · 이앙 후 ${tD}일 · 출수 ${hD<0?(-hD)+'일 전':hD+'일 후'}</div><h3>🌾 ${S.n}</h3><p><b>⚠ 이 시기에 많이 발생</b><br>${S.p.join(' · ')}</p><p><b>💧 물관리</b></p><ul>${li(S.w)}</ul><p><b>🛡 방제(선제)</b></p><ul>${li(S.s)}</ul><p><b>🧪 영양</b></p><ul>${li(S.nu)}</ul><p><b>오늘 날씨는?</b></p><div class='chips'>${wc}</div>${st.w?`<div class='warn'>${W[st.w].g[GR[k]]}</div>`:''}${up.length?`<p><b>📌 앞으로 2주 안에 준비할 일</b></p><ul>${up.map(o=>`<li>${fmt(o.d)} ${TI[o.p[2]]} ${o.p[3]}</li>`).join('')}</ul>`:''}</div>`;
 }
+function seasonCard(){
+ const today=new Date(baseDate().toDateString()),yr=baseDate().getFullYear();
+ const hv=hvS(),hw=hvE(),est=add(new Date(dt('h')+'T00:00'),48);
+ const over=(hw&&hw<=today)||(!hw&&hv&&add(hv,3)<=today);
+ const estOver=!over&&!hv&&!hw&&est<=today;
+ const closed=st.sc===yr;
+ if(!over&&!estOver&&!staleT()&&!closed)return "";
+ const per=hv?(fmt(hv)+(hw?' ~ '+fmt(hw):'')):'';
+ const msg0=closed?"올해 시즌을 마감했습니다. 겨울 할 일을 챙기고, 봄에 새 이앙일을 넣어주세요.":over?("추수 기록: "+per):estOver?("예상 수확 마감("+fmt(est)+")이 지났습니다. 추수하셨으면 '모내기' 탭에 실제 추수 날짜를 넣어주세요."):"새 시즌 이앙일을 넣어주세요.";
+ const msg=staleT()?("지난해 이앙일("+st.t+")은 계산에서 빼두었습니다. "+msg0):msg0;
+ const title=closed?"겨울 준비":over?"올해 추수 마감":estOver?"추수 시기 지남":"새 시즌 준비";
+ return "<div class='card res' style='background:var(--pri2)'><h3>🌾 "+title+" · "+yr+"년</h3><div class='d'>"+msg+"</div><p><b>추수 뒤 · 겨울에 할 일</b></p><ul><li>볏짚·그루터기 처리와 가을갈이 — 월동 해충·병원균을 줄입니다</li><li>규산·퇴비·토양개량제 시용 (토양검정 결과 기준)</li><li>배수로·논둑 정비, 농기계 점검</li><li>내년 종자 준비·소독(2~3월), 못자리 상토 확인</li></ul><button class='opt' style='text-align:center' onclick='seasonEnd()'>🌾 시즌 마감하고 새 시즌 준비</button><div class='d'>이앙일을 새로 넣으면 일정이 다시 계산됩니다.</div></div>";
+}
+function seasonEnd(){if(!confirm("이앙일·출수일·추수일을 지우고 새 시즌 준비로 넘어갈까요? (내기록의 일지는 그대로 남습니다)"))return;delete st.t;delete st.h;delete st.hv;delete st.hw;st.sc=baseDate().getFullYear();save();render()}
 const CF=['','w','s','n','a'];
 const setCF=i=>{st.cf=CF[i];render()};
 function cal(){
- const t0=new Date(baseDate().toDateString()),f=st.cf||'',custom=st.t||st.h;
+ const t0=new Date(baseDate().toDateString()),f=st.cf||'',custom=hasT()||hasH();
  const items=PL.map(p=>({d:add(new Date(dt(p[0])+'T00:00'),p[1]),p})).sort((a,b)=>a.d-b.d).filter(o=>!f||o.p[2]==f);
+ {const hv=hvS(),hw=hvE();if(hv){items.forEach(o=>{if(o.p[3]=='수확 적기 시작')o.d=hv;else if(hw&&o.p[3]=='수확 마감')o.d=hw});items.sort((a,b)=>a.d-b.d)}}
  const ni=items.findIndex(o=>o.d>=t0);
  const ch=[['','전체'],['w','💧 물'],['s','🛡 방제'],['n','🧪 영양'],['a','🌱 작업']].map((c,i)=>`<button class='${f==c[0]?'on':''}' onclick='setCF(${i})'>${c[1]}</button>`).join('');
- $('#view').innerHTML=`<div class='card'><div class='row'><div><label>이앙일</label><input type='date' value='${dt('t')}' onchange='st.t=this.value;save();render()'></div><div><label>출수일</label><input type='date' value='${dt('h')}' onchange='st.h=this.value;save();render()'></div></div><div class='d'>${custom?'직접 입력한 날짜입니다.':'2026년 기본 예상값입니다(지역별 보정).'} 이삭이 패면 실제 출수일로 바꾸세요.</div>${custom?`<button class='back' onclick='delete st.t;delete st.h;save();render()'>기본값으로</button>`:''}</div>`+stageCard()+`<div class='chips'>${ch}</div><div class='tl'>`+items.map((o,k)=>`<div class='it ${k==ni?'now':(o.d<t0?'past':'')}'><div class='d'>${o.d.getFullYear()}/${fmt(o.d)} ${TI[o.p[2]]}${k==ni?"<span class='tag'>다음</span>":''}</div><div class='t'>${o.p[3]}</div><div class='d' style='font-size:15px'>${o.p[4]}</div></div>`).join('')+`</div>`;
+ $('#view').innerHTML=seasonCard()+`<div class='card'><div class='row'><div><label>이앙일</label><input type='date' value='${dt('t')}' onchange='st.t=this.value;save();render()'></div><div><label>출수일</label><input type='date' value='${dt('h')}' onchange='st.h=this.value;save();render()'></div></div><div class='d'>${custom?'직접 입력한 날짜입니다.':baseDate().getFullYear()+'년 기본 예상값입니다(지역별 보정).'} 이삭이 패면 실제 출수일로 바꾸세요.</div>${custom?`<button class='back' onclick='delete st.t;delete st.h;save();render()'>기본값으로</button>`:''}</div>`+stageCard()+`<div class='chips'>${ch}</div><div class='tl'>`+items.map((o,k)=>`<div class='it ${k==ni?'now':(o.d<t0?'past':'')}'><div class='d'>${o.d.getFullYear()}/${fmt(o.d)} ${TI[o.p[2]]}${k==ni?"<span class='tag'>다음</span>":''}</div><div class='t'>${o.p[3]}</div><div class='d' style='font-size:15px'>${o.p[4]}</div></div>`).join('')+`</div>`;
 }
 function reg(){
  const b=baseDate();
@@ -441,10 +500,11 @@ const VR=[['신동진(중만생·82일·기본)','sindongjin',82],['일미(중�
 function plant(){
  const t0=new Date(baseDate().toDateString()),T=new Date(dt('t')+'T00:00'),H=new Date(dt('h')+'T00:00');
  const dd=d=>Math.round((d-t0)/864e5),lab=n=>n==0?'오늘':n>0?`D-${n}`:`${-n}일 지남`;
- const ev=[['🌱 모내기',T],['💧 중간물떼기 시작',add(T,35)],['🧪 이삭거름',add(H,-25)],['🌾 출수(이삭 팬)',H],['💧 물떼기 시작',add(H,22)],['🚜 수확 시작',add(H,40)],['🚜 수확 마감',add(H,48)]];
+ const HV0=hvS(),HW=hvE(),HV=(HV0&&HV0>T)?HV0:null;const ev=[['t','🌱 모내기',T,null],['mid','💧 중간물떼기 시작',add(T,35),null],['pan','🧪 이삭거름',add(H,-25),null],['h','🌾 출수(이삭 팬)',H,null],['drain','💧 물떼기 시작',add(H,22),null],['hv',(HV?'🚜 추수 시작(실제)':'🚜 수확 시작(예정)'),add(H,40),null],['hw',(HW?'🚜 추수 마감(실제)':'🚜 수확 마감(예정)'),add(H,48),null]];
  const hs=add(H,40),total=Math.max(1,Math.round((add(H,48)-T)/864e5)),pct=Math.min(100,Math.max(0,Math.round(-dd(T)/total*100))),since=-dd(T);
  const f=d=>`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`;
- $('#view').innerHTML=`<div class='card'><label style='margin-top:0'>🌱 모내기 한 날</label><input type='date' value='${dt('t')}' style='font-size:20px' onchange='st.t=this.value;save();render()'><div class='row'><div><label>품종 숙기</label><select onchange='st.v=this.value;save();render()'>${VR.map(v=>`<option value='${v[1]}' ${(+st.v||82)==v[1]?'selected':''}>${v[0]}</option>`).join('')}</select></div><div><label>이삭 팬 날(모르면 비움)</label><input type='date' value='${st.h||''}' onchange='st.h=this.value;save();render()'></div></div><div class='d'>${st.t?'입력한 날짜로 계산했습니다.':'아직 입력 전입니다. 예시값(2026년 기본)으로 표시 중입니다.'} ${st.h?'출수일은 실제 값입니다.':'출수일은 예상입니다.'}</div></div><div class='card' style='text-align:center'><div class='d'>${since>=0?'모내기 후':'모내기까지'}</div><div style='font-size:40px;font-weight:800;color:var(--pri)'>${since>=0?since+'일째':'D-'+(-since)}</div><div style='background:var(--pri2);border-radius:8px;height:14px;margin:10px 0;overflow:hidden'><div style='background:var(--pri);height:100%;width:${pct}%'></div></div><div class='d'>모내기 → 수확 마감까지 ${pct}%</div></div><div class='card' style='background:var(--pri2)'><div class='d'>예상 수확(추수) 시작</div><div style='font-size:26px;font-weight:800'>${f(hs)}</div><div class='t'>${lab(dd(hs))} · 마감 ${f(add(H,48))}</div><div class='d'>낟알 85~90% 황변, 수분 20~25%가 기준입니다. 실제 수확 시기는 논에서 확인하세요.</div></div><div class='card'><b>한눈에 보는 일정</b><div class='tl' style='margin-top:10px'>${ev.map(e=>{const n=dd(e[1]);return `<div class='it ${n==0?'now':(n<0?'past':'')}'><div class='d'>${f(e[1])}</div><div class='t'>${e[0]} <span class='tag'>${lab(n)}</span></div></div>`}).join('')}</div></div><div class='d' style='padding:0 4px'>품종·지역·날씨에 따라 1~2주 달라질 수 있습니다. 이삭이 핌을 때 출수일을 입력하면 더 정확해집니다.</div>`;
+ const past=Math.round((t0-T)/864e5),gd=Math.round(((HW||HV)-T)/864e5),over=(HW&&HW<=t0)||(!HW&&HV&&add(HV,3)<=t0),hEnd=(HW||(HV?add(HV,2):add(H,48)));
+ $('#view').innerHTML=`<div class='card'><label style='margin-top:0'>🌱 모내기 한 날</label><input type='date' value='${dt('t')}' style='font-size:20px' onchange='st.t=this.value;save();render()'><div class='row'><div><label>품종 숙기</label><select onchange='st.v=this.value;save();render()'>${VR.map(v=>`<option value='${v[1]}' ${(+st.v||82)==v[1]?'selected':''}>${v[0]}</option>`).join('')}</select></div><div><label>이삭 팬 날(모르면 비움)</label><input type='date' value='${st.h||''}' onchange='st.h=this.value;save();render()'></div></div><div class='d'>${hasT()?'입력한 날짜로 계산했습니다.':'아직 입력 전입니다. 예시값('+baseDate().getFullYear()+'년 기본)으로 표시 중입니다.'} ${hasH()?'출수일은 실제 값입니다.':'출수일은 예상입니다.'}</div></div>${over?`<div class='card' style='text-align:center;background:var(--pri2)'><div class='d'>올해 시즌 마감 ✓</div><div style='font-size:22px;font-weight:800;color:var(--pri)'>🌾 추수 끝</div><div style='margin-top:4px'>${hasT()?'이앙':'이앙(예상)'} ${f(T)} → ${(HV&&HV>T)?('추수 '+f(HV)+(HW?' ~ '+f(HW):'')):(HW?'추수 마감 '+f(HW):'추수 날짜 미입력')}</div><div class='d'>${gd>0?'재배 '+gd+'일 · ':''}모내기 ${past}일째에 마감</div><div class='t' style='font-size:17px;margin-top:4px'>추수 마감 ${f(hEnd)} · ${lab(dd(hEnd))}</div></div>`:`<div class='card' style='text-align:center'><div class='d'>${since>=0?'모내기 후':'모내기까지'}</div><div style='font-size:30px;font-weight:800;color:var(--pri)'>${since>=0?since+'일째':'D-'+(-since)}</div><div style='background:var(--pri2);border-radius:8px;height:14px;margin:10px 0;overflow:hidden'><div style='background:var(--pri);height:100%;width:${pct}%'></div></div><div class='d'>모내기 → 수확 마감까지 ${pct}%</div></div>`}<div class='card' style='background:var(--pri2)'><div class='d'>${HV?'실제 추수 시작':'예상 수확(추수) 시작'}</div><div style='font-size:26px;font-weight:800'>${f(HV||hs)}</div><div class='t'>${lab(dd(HV||hs))} · 마감 ${f(hEnd)} <b>(${lab(dd(hEnd))})</b></div><div class='d'>낟알 85~90% 황변, 수분 20~25%가 기준입니다. 실제 수확 시기는 논에서 확인하세요.</div></div><div class='card'><label style='margin-top:0'>🚜 실제 추수한 날(시작)</label><input type='date' value='${st.hv||''}' onchange='st.hv=this.value;save();render()'><label>🚜 추수 마감한 날(비워도 됨)</label><input type='date' value='${st.hw||''}' onchange='st.hw=this.value;save();render()'>${(st.hv||st.hw)?`<button class='back' onclick='delete st.hv;delete st.hw;save();render()'>추수 날짜 지우기</button>`:''}${(HV0&&HV0<=T)?`<div class='warn'>⚠ 추수 시작 날짜(${f(HV0)})가 ${hasT()?'모내기':'모내기(예상)'} 날짜(${f(T)})와 같거나 빠릅니다. 날짜를 확인해 주세요. (아래 표시에서는 이 날짜를 빼두었습니다)</div>`:''}<div class='d'>넣으면 예상 대신 실제 날짜로 표시됩니다. 안 넣어도 괜찮아요.</div></div><div class='card'><b>한눈에 보는 일정</b><div class='tl' style='margin-top:10px'>${ev.map(e=>{const k=e[0],est=e[2],av=(k==='hv')?HV:(k==='hw')?HW:actGet(k),dn=av||est,n=dd(dn),ex=(av&&fmtI(est)===fmtI(dn))?'':(av?`<span style='color:var(--sub)'> (예정 ${f(est)})</span>`:" <span style='color:var(--sub)'>(예정)</span>");return `<div class='it ${n==0?'now':(n<0?'past':'')}'><div class='d'>${f(dn)}${ex} <span class='tag'>${lab(n)}</span></div><div class='t'>${e[1]}</div><div style='margin-top:4px'><input type='date' class='actin' value='${av?fmtI(av):''}' onchange='actSet("${k}",this.value)'></div></div>`}).join('')}</div></div><div class='d' style='padding:0 4px'>품종·지역·날씨에 따라 1~2주 달라질 수 있습니다. 이삭이 핌을 때 출수일을 입력하면 더 정확해집니다.</div>`;
 }
 const CD={
 '고추':{p:'정식일',h:[50,150],m:[[7,'활착 확인·지지대'],[25,'첫 웃거름·곁순 정리'],[45,'칼슘 보충, 탄저·역병 예방 점검'],[50,'풋고추 수확 시작'],[90,'홍고추 수확 시작'],[150,'수확 마감·잔재 정리']]},
@@ -495,8 +555,13 @@ function logv(){
  let h=`<div class='card'><b>📝 영농일지</b><div class='d'>farmOS 로그 + Tania 작업 개념을 단순화. 날짜·종류·메모만 저장됩니다(오프라인).</div><div class='row'><div><label>날짜</label><input type='date' id='lg-d' value='${fmtI(baseDate())}'></div><div><label>종류</label><select id='lg-k'>`+LOGK.map(k=>`<option>${k}</option>`).join('')+`</select></div></div><label>내용 (예: 이삭거름 5kg, 멸구 밑동 점검)</label><input id='lg-m' placeholder='한 일·관찰 내용 입력'><div style='margin-top:8px'><button class='opt' style='text-align:center' onclick='logAdd()'>+ 기록 추가</button></div></div>`;
  h+=logs.length?`<div class='card'><b>최근 기록 ${logs.length}건</b>`+logs.slice(0,30).map(o=>`<div style='border-top:1px solid var(--bd);padding:8px 0'><div class='d'>${o.x.d} · ${o.x.k} <button class='back' style='float:right' onclick='logDel(${o.i})'>삭제</button></div><div>${o.x.m}</div></div>`).join('')+`</div>`:`<div class='card d'>아직 기록이 없어요. 위에서 첫 기록을 남겨보세요.</div>`;
  h+=`<div class='card'><b>📦 자재 재고 (비료·농약)</b><div class='d'>Tania 재고 개념 경량화. 수확 전 사용일·라벨은 별도 확인.</div><div class='row'><div><label>품목</label><input id='iv-n' placeholder='예: 요소, 규산, 등록약제명'></div><div><label>수량</label><input id='iv-q' placeholder='예: 2포, 500ml'></div></div><div style='margin-top:8px'><button class='opt' style='text-align:center' onclick='invAdd()'>+ 재고 추가</button></div>`+(inv.length?inv.map((x,i)=>`<div style='border-top:1px solid var(--bd);padding:8px 0'><b>${x.n}</b> <span class='d'>${x.q||''}</span><button class='back' style='float:right' onclick='invDel(${i})'>삭제</button></div>`).join(''):'')+`</div>`;
+ h+=bkCard();
  $('#view').innerHTML=h;
 }
+function bkCard(){const n=(st.logs||[]).length,m=(st.inv||[]).length;return "<div class='card res'><h3>💾 백업 · 복원</h3><div class='d'>기록 "+n+"건 · 자재 "+m+"건 · 설정을 파일 하나로 저장합니다. 브라우저를 정리해도 파일은 남습니다.</div><div class='row' style='margin-top:8px'><div><button class='opt' style='text-align:center' onclick='bkSave()'>파일로 저장</button></div><div><button class='opt' style='text-align:center' onclick='bkPick()'>파일 불러오기</button></div></div><input type='file' id='bk-f' accept='.json,application/json' style='display:none' onchange='bkLoad(this)'><div class='d' style='margin-top:6px'>불러오면 지금 기록을 새 파일 내용으로 바꿉니다.</div></div>"}
+function bkSave(){try{const n="농사도우미_"+fmtI(new Date())+".json",b=new Blob([JSON.stringify(st)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);alert("파일로 저장했어요: "+n)}catch(e){alert("저장하지 못했어요. 창을 그대로 두고 다시 눌러주세요.")}}
+function bkPick(){const f=document.getElementById("bk-f");if(f)f.click()}
+function bkLoad(el){try{const f=el&&el.files&&el.files[0];if(!f)return;const r=new FileReader();r.onload=function(){try{const o=JSON.parse(String(r.result));if(!o||typeof o!=="object"||Array.isArray(o))throw 0;const lg=(o.logs||[]).length;st=o;save();render();try{fsSet()}catch(e){}alert("불러왔어요. 기록 "+lg+"건")}catch(e){alert("파일을 읽지 못했어요. 이 앱에서 저장한 파일인지 확인하세요.")}};r.readAsText(f,"utf-8")}catch(e){alert("불러오지 못했어요")}}
 function fqDocs(){
  const D=[];
  faq.forEach(f=>D.push({t:"Q. "+f[0],b:f[1],tab:"faq"}));
@@ -553,10 +618,11 @@ const TASKD={
 "물떼기":["💧 물떼기(낙수)","때: 수확 15~20일 전부터 서서히.","주의: 너무 일찍 빼면 쭉정이·미질 저하.","뒤: 논바닥을 굳혀 수확기 진입."],
 "수확 시작":["🚜 수확 시작","기준: 낟알 85~90% 황변, 수분 20~25%.","뒤: 건조는 수분 15% 안팎까지.","주의: 비 예보 있으면 맑은 날 오후에."],
 "수확 마감":["🚜 수확 마감","늦으면 도복·쌀 깨짐↑. 서두르세요.","뒤: 규산·퇴비·가을갈이로 내년 준비."]};
-function txMark(){if(tab!=="plant"&&tab!=="cal")return;const ks=["중간물떼기","물떼기","이삭거름","출수","수확 마감","수확 시작","모내기"];document.querySelectorAll("#view .tl .it").forEach(function(it){if(it.querySelector(".txm"))return;const t=it.querySelector(".t");if(!t)return;const tx=t.textContent||"";const hit=ks.some(function(k){return tx.indexOf(k)>=0});if(!hit)return;t.insertAdjacentHTML("beforeend"," <span class='txm' style='color:var(--pri)'>＋ 자세히</span>")});document.querySelectorAll("#view p").forEach(function(p){const b=p.querySelector("b");if(b&&b.textContent==="오늘 날씨는?"&&!p.querySelector(".wxh"))b.insertAdjacentHTML("afterend"," <span class='wxh' style='font-size:13px;color:var(--sub)'>👆 누르면 아래가 바뀌어요</span>")});document.querySelectorAll("#view div.d").forEach(function(d){if(d.textContent.indexOf("지역 참고")>=0&&!d.querySelector(".wxh"))d.insertAdjacentHTML("beforeend"," <span class='wxh' style='font-size:13px'>👆 날씨를 누르면 한 줄이 붙어요</span>")})}
+function txMark(){if(tab!=="plant"&&tab!=="cal")return;const ks=["중간물떼기","물떼기","이삭거름","출수","수확 마감","수확 시작","추수 마감","추수 시작","모내기"];document.querySelectorAll("#view .tl .it").forEach(function(it){if(it.querySelector(".txm"))return;const t=it.querySelector(".t");if(!t)return;const tx=t.textContent||"";const hit=ks.some(function(k){return tx.indexOf(k)>=0});if(!hit)return;t.insertAdjacentHTML("beforeend"," <span class='txm' title='눌러서 세부정보' style='font-size:15px;opacity:.75'>ℹ️</span>")});document.querySelectorAll("#view p").forEach(function(p){const b=p.querySelector("b");if(b&&b.textContent==="오늘 날씨는?"&&!p.querySelector(".wxh"))b.insertAdjacentHTML("afterend"," <span class='wxh' style='font-size:13px;color:var(--sub)'>👆 누르면 아래가 바뀌어요</span>")});document.querySelectorAll("#view div.d").forEach(function(d){if(d.textContent.indexOf("지역 참고")>=0&&!d.querySelector(".wxh"))d.insertAdjacentHTML("beforeend"," <span class='wxh' style='font-size:13px'>👆 날씨를 누르면 한 줄이 붙어요</span>")})}
 document.addEventListener("click",function(e){
  try{
  if(tab!=="plant"&&tab!=="cal")return;
+ if(e.target&&(e.target.tagName==="INPUT"||e.target.tagName==="BUTTON"||e.target.tagName==="SELECT"))return;
  const it=e.target.closest?e.target.closest(".it"):null;
  if(!it||!it.querySelector)return;
  const t=it.querySelector(".t");if(!t)return;
@@ -566,8 +632,8 @@ document.addEventListener("click",function(e){
  else if(tx.indexOf("물떼기")>=0)k="물떼기";
  else if(tx.indexOf("이삭거름")>=0)k="이삭거름";
  else if(tx.indexOf("출수")>=0)k="출수";
- else if(tx.indexOf("수확 마감")>=0)k="수확 마감";
- else if(tx.indexOf("수확 시작")>=0)k="수확 시작";
+ else if(tx.indexOf("수확 마감")>=0||tx.indexOf("추수 마감")>=0)k="수확 마감";
+ else if(tx.indexOf("수확 시작")>=0||tx.indexOf("추수 시작")>=0)k="수확 시작";
  else if(tx.indexOf("모내기")>=0)k="모내기";
  if(!k||!TASKD[k])return;
  const wasOpen=it.querySelector(".txd")?true:false;
@@ -584,9 +650,14 @@ function telCard(){const el=document.getElementById("tel");if(!el)return;const c
 function geoBtn(){if(document.getElementById("geo-b"))return;const r=document.getElementById("reg");if(!r)return;r.insertAdjacentHTML("beforeend","<button class='back' id='geo-b' onclick='geoGo()'>📍 내 위치로 지역 찾기</button> <button class='back' onclick='geoShop()'>🚜 주변 농약사 지도</button>")}
 function geoGo(){if(!navigator.geolocation){alert("이 기기에서 위치를 쓸 수 없어요");return}const b=document.getElementById("geo-b");if(b)b.textContent="📍 찾는 중…";navigator.geolocation.getCurrentPosition(function(p){const la=p.coords.latitude,lo=p.coords.longitude;window.__geo={la:la,lo:lo};let best="buan",bd=1e9;Object.keys(R).forEach(function(k){const d=(R[k].c[0]-la)*(R[k].c[0]-la)+(R[k].c[1]-lo)*(R[k].c[1]-lo);if(d<bd){bd=d;best=k}});st.r=best;save();render()},function(){alert("위치를 가져오지 못했어요. 직접 지역을 골라주세요.")},{timeout:8000})}
 function geoShop(){const c=window.__geo?("?c="+window.__geo.lo+","+window.__geo.la+",14,0,0,0,dh"):"";window.open("https://map.naver.com/v5/search/농약사"+c,"_blank")}
+function fsSet(){try{document.documentElement.setAttribute("data-fs",st.fs||"");const b=document.getElementById("fs-b");if(b)b.textContent=st.fs==="big"?"가+":st.fs==="xl"?"가++":"가"}catch(e){}}
+function fsGo(){const o=["","big","xl"],i=o.indexOf(st.fs||"");st.fs=o[(i+1)%3];save();fsSet();const b=document.getElementById("fs-b");if(b)b.title="글자 크기: "+(st.fs===""?"보통":st.fs==="big"?"크게":"아주 크게")}
+function telAdd(){const n=(document.getElementById("tl-n").value||"").trim(),p=(document.getElementById("tl-p").value||"").trim();if(!n||!p){alert("이름과 번호를 모두 입력하세요");return}st.tels=st.tels||[];st.tels.push({n:n,p:p});save();render()}
+function telDel(i){if(!confirm("이 번호를 지울까요?"))return;st.tels.splice(i,1);save();render()}
+function telExtra(){const el=document.getElementById("tel");if(!el||el.querySelector("#tl-n"))return;const mine=(st.tels||[]).map(function(x,i){const t=String(x.p).replace(/[^0-9+]/g,"");return "<div class='nc'><a href='tel:"+t+"' style='border:0;background:none;padding:4px 0;color:var(--tx)'><small>"+x.n+"</small><b>"+x.p+"</b></a><button class='back' style='font-size:12px;padding:2px' onclick='telDel("+i+")'>지우기</button></div>"}).join("");el.insertAdjacentHTML("beforeend","<div class='tels'><div class='tsec'>📞 내 번호 · 직접 추가</div>"+(mine||"<div class='d' style='grid-column:1/-1'>아직 없어요. 아래에서 추가하세요.</div>")+"<div style='grid-column:1/-1'><div class='row'><div><input id='tl-n' placeholder='이름(예: 창북농약사)'></div><div><input id='tl-p' placeholder='전화번호' inputmode='tel'></div></div><div style='margin-top:6px'><button class='opt' style='text-align:center' onclick='telAdd()'>+ 번호 추가</button></div></div></div>")}
 function wxTab(){$('#view').innerHTML="<div class='card'><b>🌦 날씨 예보</b><div class='d'>키 없이 무료로 가져옵니다(Open-Meteo). 지역을 바꾸면 그 지역 예보로 바뀝니다.</div></div>"+wxBox()+"<div class='card d'>비·태풍 예보가 있으면 방제·수확 일정을 앞당기세요. 약·비료는 비 직전·직후를 피하세요.</div>"}
-function render(){try{nav();reg();telCard();({plant,now,cal,dx,flow,crop,tip,log:logv,faq:faqv,wx:wxTab})[tab]()}catch(err){try{document.getElementById("view").innerHTML="<div class='card'><b>⚠ 오류</b><p>"+err.message+"</p></div>"}catch(_){}}setTimeout(()=>{try{wxLoad()}catch(e){}try{flowQ()}catch(e){}try{txMark()}catch(e){}try{vrFix()}catch(e){}try{geoBtn()}catch(e){}},0)}
-render();
+function render(){try{nav();reg();telCard();({plant,now,cal,dx,flow,crop,tip,log:logv,faq:faqv,wx:wxTab})[tab]()}catch(err){try{document.getElementById("view").innerHTML="<div class='card'><b>⚠ 오류</b><p>"+err.message+"</p></div>"}catch(_){}}setTimeout(()=>{try{wxLoad()}catch(e){}try{flowQ()}catch(e){}try{txMark()}catch(e){}try{vrFix()}catch(e){}try{geoBtn()}catch(e){}try{telExtra()}catch(e){}try{fsSet()}catch(e){}},0)}
+render();fsSet();
 window.__bootOK=true;
 </script>
 <script>
